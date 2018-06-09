@@ -1,0 +1,13 @@
+server:
+  port: 8761
+eureka:
+  numberRegistrySyncRetries: 0
+  waitTimeInMsWhenSyncEmpty: 0
+# sample for multiple eureka's servers
+#  instance:
+#    hostname: peer1
+#  client:
+#    registerWithEureka: true
+#    fetchRegistry: true
+#    serviceUrl:
+#      defaultZone: http://peer1:8090/eureka/,http://peer2:8091/eureka/
