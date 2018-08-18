@@ -1,8 +1,9 @@
 server:
   port: 8761
 eureka:
-  numberRegistrySyncRetries: 0
-  waitTimeInMsWhenSyncEmpty: 0
+  client:
+    registerWithEureka: false
+    fetchRegistry: false
 # sample for multiple eureka's servers
 #  instance:
 #    hostname: peer1

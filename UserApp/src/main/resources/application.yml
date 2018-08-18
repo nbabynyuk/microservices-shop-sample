@@ -1,0 +1,21 @@
+server:
+  port: 8080
+logging:
+  level:
+    root: WARN
+    org.springframework.web: WARN
+    org.springframework.security: WARN
+    org.springframework.cloud: TRACE
+    com.netflix.eureka: TRACE
+spring:
+  application:
+    name: UserApp
+  thymeleaf:
+    cache: false
+eureka:
+  instance:
+    leaseRenewalIntervalInSeconds: 1
+    leaseExpirationDurationInSeconds: 2
+  client:
+    serviceUrl:
+      defaultZone: ${eureka_url:http://eureka-server:8761/eureka/}

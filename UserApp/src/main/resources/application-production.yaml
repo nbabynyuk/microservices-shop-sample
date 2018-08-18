@@ -1,0 +1,14 @@
+spring:
+  jpa:
+    show-sql: false
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5Dialect
+  datasource:
+    platform: mysql
+    url: "jdbc:mysql://${DB_HOST}:${DB_PORT}/userapp"
+    username: "${DB_USERNAME}"
+    password: "${DB_PASSWORD}"
+    driverClassName: com.mysql.jdbc.Driver

@@ -1,0 +1,40 @@
+version: "2.1"
+services:
+  eureka-server:
+    build: ./DiscoveryServer/
+    ports:
+      - 8761:8761
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "http://127.0.0.1:8761/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+  userappdb:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: "require"
+      MYSQL_DATABASE: "userapp"
+    ports:
+      - 5406:3306
+    healthcheck:
+      test: "/etc/init.d/mysql status"
+      interval: 1s
+      retries: 120
+  userapp:
+    build: ./UserApp/
+    depends_on:
+      userappdb:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    links:
+      - userappdb
+      - eureka-server
+    ports:
+      - 8081:8080
+    environment:
+      DB_PASSWORD: "require"
+      DB_USERNAME: "root"
+      DB_HOST: userappdb
+      DB_PORT: 3306
+      EUREKA_URL: http://eureka-server:8761/eureka
