@@ -1,4 +1,4 @@
 FROM openjdk:8-jdk-alpine
 ADD target/product-catalog.jar  product-catalog.jar
 EXPOSE 8082
-ENTRYPOINT ["java", "-jar", "userapp.jar", "generate-dummy-data"]
+ENTRYPOINT ["java", "-jar", "product-catalog.jar", "generate-dummy-data"]
