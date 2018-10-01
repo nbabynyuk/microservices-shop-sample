@@ -20,6 +20,14 @@ services:
       test: "/etc/init.d/mysql status"
       interval: 1s
       retries: 120
+  mongodb:
+    image: mongo:3.2
+    ports:
+      - 27017:27017
+    healthcheck:
+      test: echo 'db.stats().ok'
+      interval: 5s
+      timeout: 5s
   userapp:
     build: ./UserApp/
     depends_on:
@@ -38,3 +46,19 @@ services:
       DB_HOST: userappdb
       DB_PORT: 3306
       EUREKA_URL: http://eureka-server:8761/eureka
+  productcatalog:
+      build: ./ProductCatalog/
+      depends_on:
+        mongodb:
+          condition: service_healthy
+      links:
+        - mongodb
+        - eureka-server
+        - userapp
+      environment:
+        PRODUCT-DB-HOST: mongodb
+        PRODUCT-DB-PORT: 27017
+        PRODUCT-DB-NAME: "products"
+        eureka_url: http://eureka-server:8761/eureka
+      ports:
+        - 8082:8082

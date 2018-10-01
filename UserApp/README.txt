@@ -1,37 +1,20 @@
-Goal: simple application that will provide authorized users. Should have following actions
-1) Login Stuf
-  POST: /api/login        - login stuff
-  GET:  /             - index page, just displaying version
-  POST: /api/users/registration - registration
+Simple sample microservices  apps that was writing during research following areas:
+  - Spring Cloud
+  - Docker\Docker compose
 
+In order to run any full stack just issue: docker-compose up, all services will be launched started
+automatically
 
+Consist of couple services:
 
-login:
-  POST: login action, open
-logout:
-  POST: logout action, open
-user:
-  POST: create
-  GET: list
-user/{id}:
-  DELETE:
-  GET:
+  - Euereka
+  - UserService
 
+Some commands in order to experiment
 
-
-#next stop - eureka integration
-#next stop - web flux
-#next stop - move to jwt tokens
-#next stop - csrf token(reenable)
-#next stop - docker compose with containers
-#next stop - course about docker
-#next stop - SpringBoot&Flyweig
-#next stop -  check tests - web test are more integrations
-
-Dcoker build
-mvn clean package dockerfile:build
-Run container on 8090 port
-docker run -t -e DB_PASSWORD=1qaz@WSX -e DB_USERNAME=dockertest -e DB_URL=jdbc:mysql://192.168.1.4:3306/userapp -p 8090:8080 mssamples/userapp
+  mvn clean package dockerfile:build
+  Run container on 8090 port
+  docker run -t -e DB_PASSWORD=1qaz@WSX -e DB_USERNAME=dockertest -e DB_URL=jdbc:mysql://192.168.1.4:3306/userapp -p 8090:8080 mssamples/userapp
 
 
 
