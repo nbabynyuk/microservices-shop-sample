@@ -1,16 +1,17 @@
 package com.example.UserApp.entity;
 
+import com.nb.common.CreditCardDTO;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -29,6 +30,10 @@ public class UserEntity {
 
   @Column
   private Boolean isActive;
+
+  @ElementCollection
+  @CollectionTable(name="credit_cards")
+  private Collection<CreditCard> creditCards = new ArrayList<>();
 
   @ManyToMany
   private List<SecurityRole> roles = new ArrayList<>();
@@ -80,5 +85,13 @@ public class UserEntity {
 
   public List<SecurityRole> getRoles() {
     return roles;
+  }
+
+  public Collection<CreditCard> getCreditCards() {
+    return creditCards;
+  }
+
+  public void addCreditCard(CreditCard newCard){
+    this.creditCards.add(newCard);
   }
 }

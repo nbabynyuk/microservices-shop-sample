@@ -9,5 +9,6 @@ public class AppConstants {
 
   //messages constant
   public static final String USER_INPUT_ERROR = "user.input.error";
+  public static final String CREDIT_CARD_INPUT_ERROR = "credit_card.input.error";
 
 }

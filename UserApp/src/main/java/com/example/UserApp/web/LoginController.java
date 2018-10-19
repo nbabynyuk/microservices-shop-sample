@@ -2,10 +2,8 @@ package com.example.UserApp.web;
 
 import com.example.UserApp.dto.LoginRequest;
 import com.example.UserApp.service.AuthProvider;
-import com.example.UserApp.service.UserService;
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,11 +18,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class LoginController {
 
-  @Autowired
-  private AuthProvider authProvider;
+  private final AuthProvider authProvider;
 
   @Autowired
-  public LoginController() {
+  public LoginController(AuthProvider authProvider) {
+    this.authProvider = authProvider;
   }
 
   @GetMapping(value = "/", produces = "application/json")
@@ -49,11 +47,4 @@ public class LoginController {
       return ResponseEntity.ok().build();
     }
   }
-
-  @GetMapping(value = "/api/users/test", produces = "application/json")
-  public Map<String, String> sampleSecuredContent() {
-    Map<String, String> m = new HashMap<>();
-    return m;
-  }
-
 }

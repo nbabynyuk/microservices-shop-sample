@@ -1,0 +1,30 @@
+server:
+  port: 8083
+logging:
+  level:
+    root: INFO
+spring:
+  application:
+    name: OrdersService
+  data:
+    mongodb:
+      host: ${PRODUCT-DB-HOST}
+      port: ${PRODUCT-DB-PORT}
+      database: ${PRODUCT-DB-NAME}
+eureka:
+  instance:
+    leaseRenewalIntervalInSeconds: 1
+    leaseExpirationDurationInSeconds: 2
+  client:
+    serviceUrl:
+      defaultZone: ${eureka_url:http://localhost:8761/eureka/}
+
+---
+
+spring:
+  profiles: test
+  data:
+    mongodb:
+      host: "localhost"
+      port: 0
+      database: "orders"

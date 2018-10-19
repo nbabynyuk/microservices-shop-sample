@@ -5,24 +5,23 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.ArrayList;
 import java.util.List;
 
 public class ErrorResponse {
 
-  private String erroCode;
+  private String errorCode;
   private String errorMessage;
   private List<PropertyValueError> fieldErrors;
 
-  public ErrorResponse(String erroCode, String errorMessage,
+  public ErrorResponse(String errorCode, String errorMessage,
       List<PropertyValueError> fieldErrors) {
-    this.erroCode = erroCode;
+    this.errorCode = errorCode;
     this.errorMessage = errorMessage;
     this.fieldErrors = fieldErrors;
   }
 
-  public String getErroCode() {
-    return erroCode;
+  public String getErrorCode() {
+    return errorCode;
   }
 
   public String getErrorMessage() {

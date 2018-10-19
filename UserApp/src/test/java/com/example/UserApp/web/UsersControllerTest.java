@@ -5,7 +5,6 @@ import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.example.UserApp.AppTestConfig;
 import com.example.UserApp.dto.UserRegistrationRequest;
 import com.example.UserApp.entity.UserEntity;
 import com.example.UserApp.service.UserService;
@@ -13,34 +12,27 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Profile;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-@SpringBootTest
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = AppTestConfig.class)
-@WebAppConfiguration
 public class UsersControllerTest {
 
-  @Autowired
-  private UsersController usersController;
-
-  @MockBean
+  @Mock
   private UserService userService;
 
   private MockMvc mockMvc;
 
+  private final ObjectMapper mapper = new ObjectMapper();
+
   @Before
   public void init() {
-    this.mockMvc = MockMvcBuilders.standaloneSetup(usersController).build();
+    MockitoAnnotations.initMocks(this.getClass());
+    this.mockMvc = MockMvcBuilders.standaloneSetup(new UsersController(userService)).build();
   }
 
   @Test
@@ -64,7 +56,6 @@ public class UsersControllerTest {
         .andExpect(status().isCreated());
   }
 
-
   @Test
   public void createUser_validation_failed() throws Exception {
 
@@ -72,7 +63,6 @@ public class UsersControllerTest {
     urr.setUsername("client_1");
     urr.setPassword("p12345!");
 
-    ObjectMapper mapper = new ObjectMapper();
     String urrAsString = mapper.writeValueAsString(urr);
     this.mockMvc.perform(post("/api/users/registration")
         .content(urrAsString)
@@ -80,5 +70,4 @@ public class UsersControllerTest {
         .contentType(MediaType.APPLICATION_JSON_VALUE))
         .andExpect(status().isBadRequest());
   }
-
 }
