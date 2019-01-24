@@ -41,15 +41,12 @@ public class UsersControllerTest {
     created.setId(5L);
     given(userService.createUser(any ())).willReturn(created);
 
-    UserRegistrationRequest urr = new UserRegistrationRequest();
-    urr.setUsername("client_1");
-    urr.setPassword("p12345!");
-    urr.setPwdConfirmation("p12345!");
-
-    ObjectMapper mapper = new ObjectMapper();
-    String urrAsString = mapper.writeValueAsString(urr);
     this.mockMvc.perform(post("/api/users/registration")
-        .content(urrAsString)
+        .content("{"
+            + "\"username\":\"client_1\","
+            + "\"password\":\"p12345!\","
+            + "\"pwdConfirmation\":\"p12345!\""
+            + "}")
         .accept(MediaType.APPLICATION_JSON_VALUE)
         .contentType(MediaType.APPLICATION_JSON_VALUE)
         .header("location", "/api/users/1"))
@@ -58,14 +55,12 @@ public class UsersControllerTest {
 
   @Test
   public void createUser_validation_failed() throws Exception {
-
-    UserRegistrationRequest urr = new UserRegistrationRequest();
-    urr.setUsername("client_1");
-    urr.setPassword("p12345!");
-
-    String urrAsString = mapper.writeValueAsString(urr);
     this.mockMvc.perform(post("/api/users/registration")
-        .content(urrAsString)
+        .content("{"
+            + "\"username\":\"client_1\","
+            + "\"password\":\"p12345!\","
+            + "\"pwdConfirmation\":null"
+            + "}")
         .accept(MediaType.APPLICATION_JSON_VALUE)
         .contentType(MediaType.APPLICATION_JSON_VALUE))
         .andExpect(status().isBadRequest());
