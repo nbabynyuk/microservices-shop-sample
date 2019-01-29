@@ -1,14 +1,13 @@
 package com.example.UserApp.entity;
 
-import com.nb.common.CreditCardDTO;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
@@ -35,7 +34,7 @@ public class UserEntity {
   @CollectionTable(name="credit_cards")
   private Collection<CreditCard> creditCards = new ArrayList<>();
 
-  @ManyToMany
+  @ManyToMany(fetch = FetchType.EAGER)
   private List<SecurityRole> roles = new ArrayList<>();
 
   public UserEntity () {}

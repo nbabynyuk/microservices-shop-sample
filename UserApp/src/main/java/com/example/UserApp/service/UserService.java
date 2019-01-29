@@ -13,7 +13,7 @@ import com.example.UserApp.errors.UserNotFoundException;
 import com.example.UserApp.repo.SecurityRoleRepo;
 import com.example.UserApp.repo.UserRepository;
 import com.nb.common.CreditCardDTO;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -34,14 +34,18 @@ public class UserService implements UserDetailsService {
 
   private Logger logger = LoggerFactory.getLogger(UserService.class);
 
-  @Autowired
   private PasswordEncoder passwordEncoder;
 
-  @Autowired
   private UserRepository userRepository;
 
-  @Autowired
   private SecurityRoleRepo securityRoleRepo;
+
+  @Autowired
+  public UserService(PasswordEncoder pe, UserRepository ur, SecurityRoleRepo rolesRepo) {
+    this.passwordEncoder = pe;
+    this.userRepository = ur;
+    this.securityRoleRepo = rolesRepo;
+  }
 
   public UserEntity createUser(UserRegistrationRequest urr) throws PasswordMismatchException {
     if (urr.getPassword().equals(urr.getPwdConfirmation())) {
@@ -50,7 +54,7 @@ public class UserService implements UserDetailsService {
         UserEntity u = new UserEntity(
             urr.getUsername(),
             pwdHash,
-            Arrays.asList(securityRole));
+            Collections.singletonList(securityRole));
         return userRepository.save(u);
       }).orElseThrow(() -> new IllegalArgumentException("PLease check app configuration"));
     } else {

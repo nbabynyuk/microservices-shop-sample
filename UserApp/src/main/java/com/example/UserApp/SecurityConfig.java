@@ -1,7 +1,8 @@
 
 package com.example.UserApp;
 
-import com.example.UserApp.service.AuthProvider;
+import com.example.UserApp.filters.CustomUsernamePasswordAuthenticationFilter;
+import com.example.UserApp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -10,13 +11,18 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+	private UserService userService;
+
 	@Autowired
-	private AuthProvider authProvider;
+	public SecurityConfig(UserService userService) {
+	  this.userService = userService;
+  }
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
@@ -26,22 +32,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 					.antMatchers( "/",
 							"/api/users/registration",
 							"/api/login",
-							"/api/logout").anonymous()
-					.antMatchers("/api/users/**").authenticated();
-//					.and()
-//				.formLogin()
-//					.loginPage("/api/login")
-//					.failureUrl("/api/login-error");
+							"/api/logout").permitAll()
+					.antMatchers("/api/users/**").authenticated()
+					.and()
+				   .formLogin().loginProcessingUrl("/api/login")
+				  .and().addFilterAt(new CustomUsernamePasswordAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+					.httpBasic();
 	}
 
-	@Autowired
-	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-		auth
-				.authenticationProvider(authProvider);
-
-		authProvider.setPasswordEncoder(passwordEncoder());
-//				.withUser(UserEntity.withDefaultPasswordEncoder().username("user").password("password").roles("USER"));
+	@Override
+	protected void configure(
+			AuthenticationManagerBuilder auth) throws Exception {
+			auth.userDetailsService(userService);
 	}
+
 
 	@Bean
 	public PasswordEncoder passwordEncoder() {
