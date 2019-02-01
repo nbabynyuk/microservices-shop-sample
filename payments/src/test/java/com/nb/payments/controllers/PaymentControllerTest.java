@@ -1,15 +1,13 @@
 package com.nb.payments.controllers;
 
-import static org.junit.Assert.assertTrue;
-
-import com.nb.common.CreditCardDTO;
-import com.nb.payments.entity.PaymentData;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import reactor.core.publisher.Mono;
 
 
 @RunWith(SpringRunner.class)
@@ -23,15 +21,23 @@ public class PaymentControllerTest {
   @Test
   public void testProcessPayment() throws Exception {
 
+    String value = "{ "
+        + " \"paymentFrom\":{"
+        + "      \"cardNumber\":\"xxxx-yyyy-zzzz\""
+        + "     ,\"expireAt\":\"02/19\""
+        + "     ,\"cvcode\":\"111\""
+        + " },"
+        + " \"paymentTo\":\"999-777-0\","
+        + " \"amount\":50.322"
+        + " }";
 
-    PaymentData pd = new PaymentData(
-        new CreditCardDTO("xxxx-yyyy-zzzz", "02/19", "111"),
-        "999-777-0",
-        500L );
-
-    assertTrue(true);
-
-
+     webTestClient.post()
+        .uri("/payments")
+        .contentType(MediaType.APPLICATION_JSON_UTF8)
+        .accept(MediaType.APPLICATION_JSON_UTF8)
+        .body(Mono.just(value), String.class)
+        .exchange()
+        .expectStatus().isCreated();
 
   }
 
