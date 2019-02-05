@@ -1,9 +1,10 @@
-package com.nb.payments.controllers;
+package com.nb.payments.functional;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -12,7 +13,8 @@ import reactor.core.publisher.Mono;
 
 @RunWith(SpringRunner.class)
 @WebFluxTest(PaymentController.class)
-public class PaymentControllerTest {
+//@Import(EmbeddedMongoConfig.class)
+public class PaymentAppTest {
 
   @Autowired
   private WebTestClient webTestClient;

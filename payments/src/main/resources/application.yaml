@@ -1,0 +1,14 @@
+server:
+  port: 8083
+logging:
+  level:
+    root: INFO
+spring:
+  application:
+    name: payments
+  data:
+    mongodb:
+#      host: ${PAYMENTS-DB-HOST}
+#      port: ${PAYMENTS-DB-PORT}
+#      database: ${PAYMENTS-DB-NAME}
+      uri: ${PAYMENTS_DB_URI:mongodb://localhost:27017/payments}
