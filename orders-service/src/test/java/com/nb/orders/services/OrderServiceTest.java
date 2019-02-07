@@ -5,6 +5,7 @@ import static org.junit.Assert.fail;
 import com.nb.common.CreditCardDTO;
 import com.nb.orders.dto.OrderInput;
 import com.nb.orders.dto.OrderItemInput;
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -26,9 +27,10 @@ public class OrderServiceTest {
   public void testProcessOrder(){
 
     OrderInput input = new OrderInput(REF_USER_ID,
-        Collections.singleton(new OrderItemInput(REF_PRODUCT_ID, 1))
+        Collections.singleton(new OrderItemInput(REF_PRODUCT_ID, 1, new BigDecimal(35))),
+        new CreditCardDTO("xxx-yyy-zzz", "02/19", "111"),
+        "Test city"
     );
-
     ordersService.processOrder(input);
     fail();
 

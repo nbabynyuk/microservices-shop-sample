@@ -21,7 +21,8 @@ public class OrderControllerTest {
   @Before
   public void setup() {
     MockitoAnnotations.initMocks(this.getClass());
-    this.mockMvc = MockMvcBuilders.standaloneSetup(new OrderController()).build();
+    this.mockMvc = MockMvcBuilders.standaloneSetup(new OrderController())
+        .setControllerAdvice(new ErrorHandlerController()).build();
   }
 
   @Test
@@ -29,13 +30,21 @@ public class OrderControllerTest {
     mockMvc.perform(
         post("/api/orders")
             .header("Content-Type", "application/json")
-            .content("{"
-                + "\"userId\":5543"
-                + ",\"purchases\":["
-                + "   { \"productId\":\"tested_product\","
-                + "     \"quantity\":1"
-                + "    }"
-                + "]}")
+            .content("{ "
+                + "       \"userId\":5543"
+                + "       , \"purchases\":["
+                + "                {"
+                + "                \"productId\":\"tested_product\","
+                + "                        \"quantity\":1"
+                + "                 }"
+                + "           ],"
+                + "           \"creditCard\" : {"
+                + "             \"cardNumber\": \"xxx-yyy-zz\","
+                + "             \"expireAt\" : \"02/19\","
+                + "             \"cvcode\": \"111\""
+                + "            },"
+                + "            \"deliveryAddress\": \"xxxxffdfd, Street 5, 32\""
+                + "}")
     ).andExpect(status().isCreated());
   }
 

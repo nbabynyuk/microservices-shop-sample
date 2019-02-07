@@ -1,5 +1,6 @@
 package com.nb.orders.dto;
 
+import com.nb.common.CreditCardDTO;
 import java.util.Collection;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -9,8 +10,14 @@ import lombok.Data;
 public class OrderInput {
 
   @NotNull
-  private final long userId;
+  private final Long userId;
 
   @NotEmpty
   private final Collection<OrderItemInput> purchases;
+
+  @NotNull
+  private final CreditCardDTO creditCard;
+
+  @NotEmpty
+  private final String deliveryAddress;
 }

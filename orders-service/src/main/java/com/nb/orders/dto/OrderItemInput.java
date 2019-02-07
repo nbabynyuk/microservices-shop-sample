@@ -1,5 +1,6 @@
 package com.nb.orders.dto;
 
+import java.math.BigDecimal;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
 
@@ -7,9 +8,12 @@ import lombok.Data;
 public class OrderItemInput {
 
   @NotNull
-  public final String productId;
+  private final String productId;
 
   @NotNull
-  public final int quantity;
+  private final int quantity;
+
+  @NotNull
+  private final BigDecimal pricePerItem;
 
 }
