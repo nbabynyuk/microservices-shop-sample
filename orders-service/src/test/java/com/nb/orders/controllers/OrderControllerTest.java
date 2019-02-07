@@ -4,9 +4,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.nb.orders.services.OrdersService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -16,12 +18,15 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 @RunWith(SpringJUnit4ClassRunner.class)
 public class OrderControllerTest {
 
+  @Mock
+  private OrdersService ordersService;
+
   private MockMvc mockMvc;
 
   @Before
   public void setup() {
     MockitoAnnotations.initMocks(this.getClass());
-    this.mockMvc = MockMvcBuilders.standaloneSetup(new OrderController())
+    this.mockMvc = MockMvcBuilders.standaloneSetup(new OrderController(ordersService))
         .setControllerAdvice(new ErrorHandlerController()).build();
   }
 

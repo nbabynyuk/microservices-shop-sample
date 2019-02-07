@@ -13,7 +13,7 @@ public class OrderInput {
   private final Long userId;
 
   @NotEmpty
-  private final Collection<OrderItemInput> purchases;
+  private final Collection<ProductPurchase> purchases;
 
   @NotNull
   private final CreditCardDTO creditCard;
