@@ -21,7 +21,8 @@ public class CustomUsernamePasswordAuthenticationFilter extends
   private Logger logger = LoggerFactory.getLogger(CustomUsernamePasswordAuthenticationFilter.class);
 
   @Override
-  public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+  public Authentication attemptAuthentication(HttpServletRequest request,
+      HttpServletResponse response) throws AuthenticationException {
     try {
       BufferedReader reader = request.getReader();
       StringBuilder sb = new StringBuilder();
@@ -31,19 +32,19 @@ public class CustomUsernamePasswordAuthenticationFilter extends
       }
       String parsedReq = sb.toString();
 
-        ObjectMapper mapper = new ObjectMapper();
-        AuthReq authReq = mapper.readValue(parsedReq, AuthReq.class);
-        return new UsernamePasswordAuthenticationToken(authReq.getUsername(), authReq.getPassword());
+      ObjectMapper mapper = new ObjectMapper();
+      AuthReq authReq = mapper.readValue(parsedReq, AuthReq.class);
+      return new UsernamePasswordAuthenticationToken(authReq.getUsername(), authReq.getPassword());
 
     } catch (IOException e) {
-      System.out.println(e.getMessage());
-      throw new InternalAuthenticationServiceException("Failed to parse authentication request body");
+      throw new InternalAuthenticationServiceException(
+          "Failed to parse authentication request body");
     }
-
   }
 
   @Data
   public static class AuthReq {
+
     String username;
     String password;
   }
