@@ -1,6 +1,5 @@
 package com.example.UserApp.filters;
 
-import com.example.UserApp.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.BufferedReader;
 import java.io.IOException;

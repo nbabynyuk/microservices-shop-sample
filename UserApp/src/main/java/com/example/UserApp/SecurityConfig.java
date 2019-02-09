@@ -17,32 +17,41 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-	private UserService userService;
+  private UserService userService;
 
-	@Autowired
-	public SecurityConfig(UserService userService) {
-	  this.userService = userService;
+  @Autowired
+  public SecurityConfig(UserService userService) {
+    this.userService = userService;
   }
 
-	@Override
-	protected void configure(HttpSecurity http) throws Exception {
-		http
-				.csrf().disable()
-				.authorizeRequests()
-					.antMatchers( "/",
-							"/api/users/registration",
-							"/api/login",
-							"/api/logout").permitAll()
-					.antMatchers("/api/users/**").authenticated()
-					.and()
-				   .formLogin().loginProcessingUrl("/api/login")
-				  .and().addFilterAt(new CustomUsernamePasswordAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
-					.httpBasic();
-	}
+  @Override
+  protected void configure(HttpSecurity http) throws Exception {
+    http
+        .csrf().disable()
+        .authorizeRequests()
+        .antMatchers("/",
+            "/api/users/registration",
+            "/api/login",
+            "/api/logout").permitAll()
+        .antMatchers("/api/users/**").authenticated()
+        .and()
+        .addFilter(customAuthFilter())
+        .formLogin()
+        .loginProcessingUrl("/api/login")
+        .and()
+        .httpBasic();
+  }
 
-	@Override
-	protected void configure(
-			AuthenticationManagerBuilder auth) throws Exception {
-			auth.userDetailsService(userService);
-	}
+  @Bean
+  public CustomUsernamePasswordAuthenticationFilter customAuthFilter() throws Exception {
+    CustomUsernamePasswordAuthenticationFilter f = new CustomUsernamePasswordAuthenticationFilter();
+    f.setAuthenticationManager(authenticationManager() );
+    f.setFilterProcessesUrl("/api/login");
+    return f;
+  }
+
+  @Override
+  protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+    auth.userDetailsService(userService);
+  }
 }
