@@ -58,21 +58,30 @@ public class IntegrationTest {
     );
 
     String s = mapper.writeValueAsString(urr);
-    MvcResult r2 = this.mockMvc.perform(
+    MvcResult registrationResult = this.mockMvc.perform(
         post("/api/users/registration")
             .header("Content-Type", "application/json")
         .content(s)
     ).andExpect(status().isCreated())
       .andReturn();
 
-    String newUsersPath = r2.getResponse().getHeader("location");
-    String usernamePwd = REF_USERNAME + ":" + REF_PASSWORD;
-    String usernamePWDEncoded = Base64.getEncoder().encodeToString(usernamePwd.getBytes());
+    MvcResult loginResult = this.mockMvc.perform(
+        post("/api/login")
+            .header("Content-Type", "application/json")
+            .content("{\n"
+                + " \"username\": \"" + REF_USERNAME  + "\" ,"
+                + " \"password\": \"" + REF_PASSWORD + "\" "
+                + "}")
+    ).andExpect(status().isOk())
+        .andReturn();
+    String authHeader = loginResult.getResponse().getHeader("Authorization");
+
+    String newUsersPath = registrationResult.getResponse().getHeader("location");
 
     this.mockMvc.perform(
         put(newUsersPath + "/creditCards")
             .header("Content-Type", "application/json")
-            .header("Authorization", "Basic " + usernamePWDEncoded)
+            .header("Authorization", authHeader)
             .content("{\n"
                 + "\t\"operation\":\"ADD\"\n"
                 + "\t,\"creditCard\": {\n"

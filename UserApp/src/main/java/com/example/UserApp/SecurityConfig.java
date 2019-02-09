@@ -1,7 +1,8 @@
 
 package com.example.UserApp;
 
-import com.example.UserApp.filters.CustomUsernamePasswordAuthenticationFilter;
+import com.example.UserApp.filters.JWTAuthenticationFilter;
+import com.example.UserApp.filters.JWTAuthorizationFilter;
 import com.example.UserApp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -9,9 +10,6 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 
 @EnableWebSecurity
@@ -36,6 +34,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .antMatchers("/api/users/**").authenticated()
         .and()
         .addFilter(customAuthFilter())
+        .addFilter(new JWTAuthorizationFilter(authenticationManager()))
         .formLogin()
         .loginProcessingUrl("/api/login")
         .and()
@@ -43,9 +42,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   }
 
   @Bean
-  public CustomUsernamePasswordAuthenticationFilter customAuthFilter() throws Exception {
-    CustomUsernamePasswordAuthenticationFilter f = new CustomUsernamePasswordAuthenticationFilter();
-    f.setAuthenticationManager(authenticationManager() );
+  public JWTAuthenticationFilter customAuthFilter() throws Exception {
+    JWTAuthenticationFilter f = new JWTAuthenticationFilter(authenticationManager());
     f.setFilterProcessesUrl("/api/login");
     return f;
   }
