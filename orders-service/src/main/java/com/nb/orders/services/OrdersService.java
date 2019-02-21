@@ -7,6 +7,7 @@ import com.nb.common.ShipmentRequest;
 import com.nb.orders.dto.OrderInput;
 import com.nb.orders.remote.PaymentClient;
 import com.nb.orders.remote.StockClient;
+import com.nb.orders.repo.OrdersRepository;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,6 +25,7 @@ public class OrdersService {
 
   private final PaymentClient paymentService;
 
+
   @Autowired
   public OrdersService (PaymentClient paymentClient, StockClient stockClient) {
     this.paymentService = paymentClient;
@@ -31,8 +33,9 @@ public class OrdersService {
   }
 
   public void processOrder(OrderInput input){
-    prepareShipmentFromStock(input);
-    processPayment(input);
+    OperationResult stockReservationResult = prepareShipmentFromStock(input);
+    OperationResult paymentProcessingResult = processPayment(input);
+    //ordersRepository.in
   }
 
   private OperationResult processPayment(OrderInput input) {

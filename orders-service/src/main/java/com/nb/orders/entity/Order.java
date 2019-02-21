@@ -1,19 +1,30 @@
 package com.nb.orders.entity;
 
+
+import com.nb.orders.dto.ProductPurchase;
 import java.util.Collection;
+import javax.validation.constraints.NotEmpty;
+import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document
+@Data
 public class Order {
 
   @Id
-  private Long id;
+  private String uuid;
 
-  private Collection<OrderItem> items;
+  @NotEmpty
+  private String paymentId;
 
-  private OrderState orderState;
+  @NotEmpty
+  private String stockReservationId;
 
-  private UserDetails userDetails;
+  @NotEmpty
+  private Long userId;
+
+  @NotEmpty
+  private final Collection<ProductPurchase> purchases;
 
 }
