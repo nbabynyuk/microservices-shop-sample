@@ -8,7 +8,7 @@ import com.nb.common.CreditCardDTO;
 import com.nb.orders.dto.OrderInput;
 import com.nb.orders.dto.ProductPurchase;
 import com.nb.orders.remote.PaymentClient;
-import com.nb.orders.remote.UserClient;
+import com.nb.orders.remote.StockClient;
 import java.math.BigDecimal;
 import java.util.Collections;
 import org.junit.Before;
@@ -25,17 +25,17 @@ public class OrderServiceTest {
   private final String REF_PRODUCT_ID = "fdsafds";
 
   @Mock
-  private UserClient userClient;
+  private PaymentClient paymentClient;
 
   @Mock
-  private PaymentClient paymentClient;
+  private StockClient stockService;
 
   private OrdersService ordersService;
 
   @Before
   public void setup() {
     MockitoAnnotations.initMocks(this);
-    this.ordersService = new OrdersService(userClient, paymentClient);
+    this.ordersService = new OrdersService(paymentClient, stockService);
   }
 
   @Test
@@ -48,6 +48,7 @@ public class OrderServiceTest {
     );
     ordersService.processOrder(input);
     verify(paymentClient).process(any());
+    verify(stockService).processShipmentRequest(any());
   }
 
 }

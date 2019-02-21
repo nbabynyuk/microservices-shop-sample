@@ -11,7 +11,7 @@ public class ProductPurchase {
   private final String productId;
 
   @NotNull
-  private final int quantity;
+  private final Integer quantity;
 
   @NotNull
   private final BigDecimal pricePerItem;

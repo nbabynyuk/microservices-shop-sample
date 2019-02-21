@@ -30,6 +30,7 @@
     <module>UserApp</module>
     <module>orders-service</module>
     <module>payments</module>
+    <module>stock</module>
   </modules>
 
   <dependencyManagement>

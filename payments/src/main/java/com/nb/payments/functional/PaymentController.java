@@ -1,5 +1,6 @@
 package com.nb.payments.functional;
 
+import com.nb.common.OperationResult;
 import com.nb.payments.entity.PaymentData;
 import com.nb.payments.repo.PaymentRepo;
 import java.util.HashMap;
@@ -28,17 +29,15 @@ public class PaymentController {
       produces = "application/json",
       consumes = "application/json")
   @ResponseStatus(HttpStatus.CREATED)
-  public Mono<Map<String, String>> processOrder(@Valid @RequestBody PaymentData paymentData ){
+  public Mono<OperationResult> processOrder(@Valid @RequestBody PaymentData paymentData ){
     return Mono.just(paymentData).
         map(x -> {
           x.setUuid(UUID.randomUUID().toString());
           return x;
         }).flatMap(paymentRepo::insert)
-          .map( storedPayment -> {
-            Map<String, String> m = new HashMap<>();
-            m.put("transactionId", storedPayment.getUuid());
-            return m;
-          });
+          .map( storedPayment ->
+            new OperationResult(storedPayment.getUuid())
+          );
   }
 
 }
