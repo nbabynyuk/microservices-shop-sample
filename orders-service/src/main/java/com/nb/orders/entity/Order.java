@@ -3,6 +3,7 @@ package com.nb.orders.entity;
 
 import com.nb.orders.dto.ProductPurchase;
 import java.util.Collection;
+import java.util.Collections;
 import javax.validation.constraints.NotEmpty;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
@@ -25,6 +26,14 @@ public class Order {
   private Long userId;
 
   @NotEmpty
-  private final Collection<ProductPurchase> purchases;
+  private Collection<ProductPurchase> purchases;
+
+  public Order() {}
+
+  public Order(Long userId, Collection< ProductPurchase> productPurchases, String stockReservationId) {
+    this.userId = userId;
+    this.purchases = Collections.unmodifiableCollection(productPurchases);
+    this.stockReservationId = stockReservationId;
+  }
 
 }

@@ -3,8 +3,6 @@ package com.nb.payments.functional;
 import com.nb.common.OperationResult;
 import com.nb.payments.entity.PaymentData;
 import com.nb.payments.repo.PaymentRepo;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

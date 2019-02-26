@@ -6,15 +6,16 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.support.WebExchangeBindException;
+import reactor.core.publisher.Mono;
 
 @ControllerAdvice
 public class ErrorHandlerController {
 
-  @ExceptionHandler(MethodArgumentNotValidException.class)
-  public ResponseEntity<?> handleError(MethodArgumentNotValidException e){
+  @ExceptionHandler({WebExchangeBindException.class})
+  public Mono<ResponseEntity<?>> handleError(WebExchangeBindException e){
     List<String> errors = e.getBindingResult().getAllErrors()
         .stream()
         .map(fe ->
@@ -24,7 +25,7 @@ public class ErrorHandlerController {
         .collect(Collectors.toList());
     HttpHeaders headers = new HttpHeaders();
     headers.put("errors", errors);
-    return new ResponseEntity(headers, HttpStatus.BAD_REQUEST);
+    return Mono.just(new ResponseEntity(headers, HttpStatus.BAD_REQUEST));
   }
 
 }

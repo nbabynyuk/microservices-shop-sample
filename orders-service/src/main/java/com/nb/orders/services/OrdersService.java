@@ -5,6 +5,7 @@ import com.nb.common.PaymentRequest;
 import com.nb.common.ShipmentItem;
 import com.nb.common.ShipmentRequest;
 import com.nb.orders.dto.OrderInput;
+import com.nb.orders.entity.Order;
 import com.nb.orders.remote.PaymentClient;
 import com.nb.orders.remote.StockClient;
 import com.nb.orders.repo.OrdersRepository;
@@ -14,6 +15,8 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 @Component
 public class OrdersService {
@@ -25,17 +28,29 @@ public class OrdersService {
 
   private final PaymentClient paymentService;
 
+  private final OrdersRepository ordersRepository;
+
 
   @Autowired
-  public OrdersService (PaymentClient paymentClient, StockClient stockClient) {
+  public OrdersService(PaymentClient paymentClient, StockClient stockClient,
+      OrdersRepository ordersRepository) {
     this.paymentService = paymentClient;
     this.stockService = stockClient;
+    this.ordersRepository = ordersRepository;
   }
 
-  public void processOrder(OrderInput input){
-    OperationResult stockReservationResult = prepareShipmentFromStock(input);
-    OperationResult paymentProcessingResult = processPayment(input);
-    //ordersRepository.in
+  public Mono<Order> processOrder(final OrderInput input){
+    return Mono.just(input)
+        .publishOn(Schedulers.elastic())
+        .map(orderInput -> {
+          OperationResult stockReservationResult = prepareShipmentFromStock(input);
+          return new Order(input.getUserId(), input.getPurchases(), stockReservationResult.getUuid());
+        }).map(order ->  {
+          OperationResult paymentResult = processPayment(input);
+          order.setPaymentId(paymentResult.getUuid());
+          return order;
+        }).map(ordersRepository::save)
+        .flatMap(savedOrder -> savedOrder);
   }
 
   private OperationResult processPayment(OrderInput input) {
