@@ -5,10 +5,8 @@ import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.example.UserApp.dto.UserRegistrationRequest;
 import com.example.UserApp.entity.UserEntity;
 import com.example.UserApp.service.UserService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,12 +25,12 @@ public class UsersControllerTest {
 
   private MockMvc mockMvc;
 
-  private final ObjectMapper mapper = new ObjectMapper();
-
   @Before
   public void init() {
     MockitoAnnotations.initMocks(this.getClass());
-    this.mockMvc = MockMvcBuilders.standaloneSetup(new UsersController(userService)).build();
+    this.mockMvc = MockMvcBuilders.standaloneSetup(new UsersController(userService))
+        .setControllerAdvice(new ErrorHandlerController())
+        .build();
   }
 
   @Test

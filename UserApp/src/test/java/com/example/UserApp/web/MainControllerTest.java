@@ -15,10 +15,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 @RunWith(SpringJUnit4ClassRunner.class)
 public class MainControllerTest {
 
-
   private MockMvc mockMvc;
-
-  private static final String REFERENCE_USERNAME = "testedUser";
 
   @Before
   public void init() {
@@ -31,6 +28,5 @@ public class MainControllerTest {
         get("/").accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(content().json("{'name': 'UserApp', 'version':'1.0'}"));
-
   }
 }

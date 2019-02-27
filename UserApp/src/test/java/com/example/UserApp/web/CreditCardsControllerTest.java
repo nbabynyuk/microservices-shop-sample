@@ -38,7 +38,9 @@ public class CreditCardsControllerTest {
   @Before
   public void init() {
     MockitoAnnotations.initMocks(this);
-    this.mockMvc = MockMvcBuilders.standaloneSetup(new CreditCardsController(userService)).build();
+    this.mockMvc = MockMvcBuilders.standaloneSetup(new CreditCardsController(userService))
+        .setControllerAdvice(new ErrorHandlerController())
+        .build();
   }
 
   @Test

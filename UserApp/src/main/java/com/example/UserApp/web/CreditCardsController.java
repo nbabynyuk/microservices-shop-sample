@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class CreditCardsController implements DefaultErroHandler {
+public class CreditCardsController {
 
   private final UserService userService;
 
@@ -36,17 +36,12 @@ public class CreditCardsController implements DefaultErroHandler {
 
   @PutMapping(value = "/api/users/{userId}/creditCards", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<?> updatePaymentInfo(@PathVariable Long userId,
-      @Valid @RequestBody PaymentMethodUpdateRequests updateRequest,
-      BindingResult bindingResult) {
-    if (updateRequest == null || bindingResult.hasErrors()) {
-      return handleError(bindingResult, CREDIT_CARD_INPUT_ERROR);
-    } else {
+      @Valid @RequestBody PaymentMethodUpdateRequests updateRequest) {
       try {
         userService.updatePaymentMethod(userId, updateRequest);
         return ResponseEntity.ok().build();
       } catch (UserNotFoundException une) {
         return ResponseEntity.notFound().build();
       }
-    }
   }
 }
