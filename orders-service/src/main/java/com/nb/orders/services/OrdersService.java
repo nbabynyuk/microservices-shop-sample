@@ -30,9 +30,9 @@ public class OrdersService {
 
   private final OrdersRepository ordersRepository;
 
-
   @Autowired
-  public OrdersService(PaymentClient paymentClient, StockClient stockClient,
+  public OrdersService(PaymentClient paymentClient,
+      StockClient stockClient,
       OrdersRepository ordersRepository) {
     this.paymentService = paymentClient;
     this.stockService = stockClient;
