@@ -62,7 +62,8 @@ public class OrdersService {
   }
 
   private OperationResult prepareShipmentFromStock(OrderInput input) {
-    List<ShipmentItem> shipmentItems = input.getPurchases().stream().map( pp -> new ShipmentItem(pp.getProductId(), pp.getQuantity()))
+    List<ShipmentItem> shipmentItems = input.getPurchases().stream()
+        .map( pp -> new ShipmentItem(pp.getProductId(), pp.getQuantity()))
         .collect(Collectors.toList());
     ShipmentRequest sr = new ShipmentRequest(input.getDeliveryAddress(), input.getUserId(), shipmentItems);
     return stockService.processShipmentRequest(sr);

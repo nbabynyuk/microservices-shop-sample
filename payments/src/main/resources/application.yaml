@@ -3,12 +3,17 @@ server:
 logging:
   level:
     root: INFO
+    org.springframework.cloud: INFO
 spring:
   application:
     name: payments
   data:
     mongodb:
-#      host: ${PAYMENTS-DB-HOST}
-#      port: ${PAYMENTS-DB-PORT}
-#      database: ${PAYMENTS-DB-NAME}
       uri: ${PAYMENTS_DB_URI:mongodb://localhost:27017/payments}
+eureka:
+  instance:
+    leaseRenewalIntervalInSeconds: 1
+    leaseExpirationDurationInSeconds: 2
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_URL:http://eureka-server:8761/eureka/}

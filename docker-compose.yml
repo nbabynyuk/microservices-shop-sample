@@ -62,3 +62,16 @@ services:
         eureka_url: http://eureka-server:8761/eureka
       ports:
         - 8082:8082
+  payments:
+    build: ./payments/
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    links:
+      - mongodb
+      - eureka-server
+    environment:
+      PAYMENTS_DB_URI: mongodb://mongodb:27017/payments
+      EUREKA_URL: http://eureka-server:8761/eureka
+    ports:
+      - 8083:8083
