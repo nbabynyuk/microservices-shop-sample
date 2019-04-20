@@ -7,7 +7,7 @@ import javax.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
-public class OrderInput {
+public class OrderRequest {
 
   @NotNull
   private final Long userId;

@@ -1,9 +1,8 @@
 package com.nb.orders.controllers;
 
 import com.nb.common.OperationResult;
-import com.nb.orders.dto.OrderInput;
+import com.nb.orders.dto.OrderRequest;
 import com.nb.orders.services.OrdersService;
-import java.util.UUID;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,7 +25,7 @@ public class OrderController {
 
   @RequestMapping(path = "/api/orders", method = RequestMethod.POST)
   @ResponseStatus(HttpStatus.CREATED)
-  public Mono<OperationResult> create(@RequestBody @Valid OrderInput input) {
+  public Mono<OperationResult> create(@RequestBody @Valid OrderRequest input) {
     return orderService.processOrder(input)
         .map(order -> new OperationResult(order.getUuid()));
   }

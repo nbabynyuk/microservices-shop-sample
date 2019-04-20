@@ -16,10 +16,8 @@ public class Order {
   @Id
   private String uuid;
 
-  @NotEmpty
   private String paymentId;
 
-  @NotEmpty
   private String stockReservationId;
 
   @NotEmpty
@@ -28,12 +26,28 @@ public class Order {
   @NotEmpty
   private Collection<ProductPurchase> purchases;
 
+  @NotEmpty
+  private ProcessingStage processingStage;
+
   public Order() {}
 
-  public Order(Long userId, Collection< ProductPurchase> productPurchases, String stockReservationId) {
+  public Order(String uuid, Long userId, Collection< ProductPurchase> productPurchases) {
+    this.uuid = uuid;
     this.userId = userId;
     this.purchases = Collections.unmodifiableCollection(productPurchases);
-    this.stockReservationId = stockReservationId;
+    processingStage = ProcessingStage.NEW;
+  }
+
+  public void updateReservation(String reservationID) {
+    this.stockReservationId = reservationID;
+  }
+
+  public void updatePayments(String paymentsID) {
+    this.paymentId = paymentsID;
+  }
+
+  public void setProcessingStage(ProcessingStage processingStage) {
+    this.processingStage = processingStage;
   }
 
 }

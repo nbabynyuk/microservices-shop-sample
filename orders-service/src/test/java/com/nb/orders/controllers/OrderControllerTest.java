@@ -35,7 +35,7 @@ public class OrderControllerTest {
   }
 
   @Test
-  public void testCreate() throws Exception {
+  public void testCreate() {
 
     when(ordersService.processOrder(any())).then( x -> {
       Order o = new Order();
@@ -68,7 +68,7 @@ public class OrderControllerTest {
   }
 
   @Test
-  public void testCreate_invalidDTO() throws Exception {
+  public void testCreate_invalidDTO() {
     webTestClient.post()
         .uri("/api/orders")
         .header("Content-Type", "application/json")
