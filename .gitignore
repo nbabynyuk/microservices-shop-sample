@@ -5,6 +5,7 @@ mvnw.cmd
 /target/
 .mvn/wrapper/maven-wrapper.jar
 *.class
+*/target/**
 
 ### STS ###
 .apt_generated
