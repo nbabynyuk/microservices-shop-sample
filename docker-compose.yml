@@ -1,7 +1,7 @@
 version: "2.1"
 services:
   eureka-server:
-    build: ./DiscoveryServer/
+    build: ./discovery-service/
     ports:
       - 8761:8761
     healthcheck:
@@ -29,7 +29,7 @@ services:
       interval: 5s
       timeout: 5s
   userapp:
-    build: ./UserApp/
+    build: ./users-app/
     depends_on:
       userappdb:
         condition: service_healthy
@@ -47,7 +47,7 @@ services:
       DB_PORT: 3306
       EUREKA_URL: http://eureka-server:8761/eureka
   productcatalog:
-      build: ./ProductCatalog/
+      build: ./product-catalog/
       depends_on:
         mongodb:
           condition: service_healthy

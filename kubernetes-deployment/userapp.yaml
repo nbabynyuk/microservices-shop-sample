@@ -1,0 +1,53 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: userapp
+  labels:
+    app: userapp
+spec:
+  ports:
+    - port: 80
+  selector:
+    app: userapp
+    tier: backend
+  type: LoadBalancer
+---
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: userapp
+  labels:
+    app: userapp
+spec:
+  selector:
+    matchLabels:
+      app: userapp
+      tier: backend
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: userapp
+        tier: backend
+    spec:
+      containers:
+      - image: microservices-shop-sample_userapp
+        name: userapp
+        env:
+         - name: DB_USERNAME
+           value: root
+         - name: DB_PASSWORD
+           valueFrom:
+             secretKeyRef:
+               name: mysql-pass
+               key: password
+         - name: DB_HOST
+           value: userapp-db
+         - name: EUREKA_URL
+           value: http://eureka-server:8761/eureka
+         - name: DB_PORT
+           value: "3306"
+        ports:
+         - containerPort: 80
+           name: userapp
