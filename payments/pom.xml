@@ -18,7 +18,6 @@
    </parent>
 
   <properties>
-    <java.version>1.8</java.version>
     <spring-cloud.version>Greenwich.RELEASE</spring-cloud.version>
   </properties>
 
