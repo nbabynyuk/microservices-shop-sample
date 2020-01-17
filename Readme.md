@@ -1,16 +1,16 @@
-### This is a sample project where I improve my practical skills while
-investigating technologies that are new to me; it serves as a:
+### This is a sample project that emulates e-commerce  trading system
+Here I improve my practical skills while investigating technologies 
+that are new to me; it serves as a:
 * test bed for learning new things
 * source of ready-for-usage snippets that I may apply in my day-to-day
 work.
 
 Technologies: Spring Cloud, Spring Boot, Docker&Docker Compose, Java 11,
 Maven, Kubernetes(a little).
+
 Databases: Mongo\MySql
 
-Project that consist of several micro-services that
-emulates e-commerce  trading system:
-
+Project consist of following micro-services:
 * Stub of *Product Catalog* service
 * Stub of *Users* service
 * Stub of *Stock* service
