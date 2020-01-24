@@ -1,22 +1,18 @@
 package com.example.UserApp.filters;
 
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.io.ByteArrayInputStream;
-import java.util.ArrayList;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import org.junit.Test;
 import org.springframework.mock.web.DelegatingServletInputStream;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
+
+import static org.mockito.Mockito.*;
 
 public class JWTAuthenticationFilterTests {
-
 
   @Test
   public void testCredentialConsumption() throws Exception {
@@ -35,12 +31,10 @@ public class JWTAuthenticationFilterTests {
     when(rq.getInputStream())
         .thenReturn(new DelegatingServletInputStream(new ByteArrayInputStream(body.getBytes())));
 
-    Authentication a = f.attemptAuthentication(rq, rs);
+    f.attemptAuthentication(rq, rs);
     verify(manager).authenticate(eq(new UsernamePasswordAuthenticationToken(
          "test21",
         "p12345",
         new ArrayList<>())));
-
   }
-
 }

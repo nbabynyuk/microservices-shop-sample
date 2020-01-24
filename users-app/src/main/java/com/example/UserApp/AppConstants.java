@@ -4,8 +4,8 @@ package com.example.UserApp;
 public class AppConstants {
 
   //security roles
-  public static final String USER_ROLE_NAME = "user";
-  public static final String ADMIN_ROLE_NAME = "admin";
+  public static final String USER_ROLE_NAME = "ROLE_USER";
+  public static final String ADMIN_ROLE_NAME = "ROLE_ADMIN";
 
   //messages constant
   public static final String USER_INPUT_ERROR = "user.input.error";
