@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
 @RestController
+//TODO: delete me
 public class PaymentController {
 
   private final PaymentRepo paymentRepo;
@@ -23,19 +24,19 @@ public class PaymentController {
     this.paymentRepo = paymentRepo;
   }
 
-  @PostMapping(value = "/api/payments",
-      produces = "application/json",
-      consumes = "application/json")
-  @ResponseStatus(HttpStatus.CREATED)
-  public Mono<OperationResult> processOrder(@Valid @RequestBody PaymentData paymentData ){
-    return Mono.just(paymentData).
-        map(x -> {
-          x.setUuid(UUID.randomUUID().toString());
-          return x;
-        }).flatMap(paymentRepo::insert)
-          .map( storedPayment ->
-            new OperationResult(storedPayment.getUuid())
-          );
-  }
+//  @PostMapping(value = "/api/payments",
+//      produces = "application/json",
+//      consumes = "application/json")
+//  @ResponseStatus(HttpStatus.CREATED)
+//  public Mono<OperationResult> processOrder(@Valid @RequestBody PaymentData paymentData ){
+//    return Mono.just(paymentData).
+//        map(x -> {
+//          x.setUuid(UUID.randomUUID().toString());
+//          return x;
+//        }).flatMap(paymentRepo::insert)
+//          .map( storedPayment ->
+//            new OperationResult(storedPayment.getUuid())
+//          );
+//  }
 
 }

@@ -1,7 +1,7 @@
 version: "2.1"
 services:
   eureka-server:
-    build: ../DiscoveryServer/
+    build: ../discovery-service/
     ports:
       - 8761:8761
     healthcheck:
@@ -17,16 +17,16 @@ services:
       test: echo 'db.stats().ok'
       interval: 5s
       timeout: 5s
-  payments:
-    build: .
-    depends_on:
-      mongodb:
-        condition: service_healthy
-    links:
-      - mongodb
-      - eureka-server
-    environment:
-      PAYMENTS_DB_URI: mongodb://mongodb:27017/payments
-      EUREKA_URL: http://eureka-server:8761/eureka
-    ports:
-      - 8083:8083
+#  payments:
+#    build: .
+#    depends_on:
+#      mongodb:
+#        condition: service_healthy
+#    links:
+#      - mongodb
+#      - eureka-server
+#    environment:
+#      PAYMENTS_DB_URI: mongodb://mongodb:27017/payments
+#      EUREKA_URL: http://eureka-server:8761/eureka
+#    ports:
+#      - 8083:8083

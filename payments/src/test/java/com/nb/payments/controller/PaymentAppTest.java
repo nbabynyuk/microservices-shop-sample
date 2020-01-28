@@ -3,8 +3,10 @@ package com.nb.payments.controller;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import com.nb.payments.AppRoutingConfig;
 import com.nb.payments.entity.PaymentData;
 import com.nb.payments.functional.PaymentController;
+import com.nb.payments.functional.PaymentHandlerFunctions;
 import com.nb.payments.repo.PaymentRepo;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,12 +15,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
 
 @RunWith(SpringRunner.class)
-@WebFluxTest(PaymentController.class)
+@ContextConfiguration(classes = {
+    AppRoutingConfig.class,
+    PaymentHandlerFunctions.class})
+@WebFluxTest
 public class PaymentAppTest {
 
   @MockBean
@@ -49,12 +55,10 @@ public class PaymentAppTest {
 
      webTestClient.post()
         .uri("/api/payments")
-        .contentType(MediaType.APPLICATION_JSON_UTF8)
-        .accept(MediaType.APPLICATION_JSON_UTF8)
+        .contentType(MediaType.APPLICATION_JSON)
+        .accept(MediaType.APPLICATION_JSON)
         .body(Mono.just(value), String.class)
         .exchange()
         .expectStatus().isCreated();
-
   }
-
 }
