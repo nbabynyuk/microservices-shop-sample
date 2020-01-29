@@ -32,15 +32,4 @@ public class ErrorResponse {
     return fieldErrors;
   }
 
-  public String toJSON() {
-    ObjectMapper mapper = new ObjectMapper();
-    mapper.setVisibility(PropertyAccessor.FIELD, Visibility.ANY);
-    String errorsAsJSON = "{}";
-    try {
-      errorsAsJSON = mapper.writeValueAsString(this);
-    } catch (JsonProcessingException e) {
-      //e.printStackTrace();
-    }
-    return errorsAsJSON;
-  }
 }

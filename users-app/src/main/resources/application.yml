@@ -19,3 +19,11 @@ eureka:
   client:
     serviceUrl:
       defaultZone: ${eureka_url:http://eureka-server:8761/eureka/}
+management:
+  endpoint:
+    health:
+      show-details: always
+  endpoints:
+    web:
+      exposure:
+        include: health, info, beans, conditions, env, loggers, metrics

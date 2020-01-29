@@ -57,6 +57,7 @@ public class UserService implements UserDetailsService {
         return userRepository.save(u);
       }).orElseThrow(() -> new IllegalArgumentException("PLease check app configuration"));
     } else {
+      logger.info("password and password confirmation doesn't match");
       throw new PasswordMismatchException();
     }
   }
