@@ -12,6 +12,9 @@ spring:
     name: UserApp
   thymeleaf:
     cache: false
+  output:
+    ansi:
+      enabled: ALWAYS
 eureka:
   instance:
     leaseRenewalIntervalInSeconds: 1

@@ -1,20 +1,9 @@
 package com.example.UserApp.web;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import com.example.UserApp.errors.UserNotFoundException;
 import com.example.UserApp.service.UserService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nb.common.CreditCardDTO;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,6 +13,16 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import java.util.Collections;
+import java.util.Optional;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 public class CreditCardsControllerTest {
@@ -39,7 +38,7 @@ public class CreditCardsControllerTest {
   public void init() {
     MockitoAnnotations.initMocks(this);
     this.mockMvc = MockMvcBuilders.standaloneSetup(new CreditCardsController(userService))
-        .setControllerAdvice(new ErrorHandlerController())
+        .setControllerAdvice(new ErrorHandlerController(new ObjectMapper()))
         .build();
   }
 

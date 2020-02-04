@@ -25,7 +25,11 @@ public class ErrorHandlerController {
 
   private Logger logger = LoggerFactory.getLogger(ErrorHandlerController.class);
 
-  private ObjectMapper mapper = new ObjectMapper();
+  private final ObjectMapper mapper;
+
+  public ErrorHandlerController(ObjectMapper mapper) {
+    this.mapper = mapper;
+  }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
   ResponseEntity handleError(MethodArgumentNotValidException e) {
