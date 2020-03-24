@@ -6,7 +6,11 @@ import com.example.UserApp.filters.JWTAuthorizationFilter;
 import com.example.UserApp.repo.SecurityRoleRepo;
 import com.example.UserApp.repo.UserRepository;
 import com.example.UserApp.service.UserService;
+import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
+import org.springframework.boot.actuate.metrics.MetricsEndpoint;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -18,6 +22,7 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 
 
 @EnableWebSecurity
+@EnableAspectJAutoProxy
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   @Bean
@@ -48,9 +53,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
           .authenticationEntryPoint(restAuthenticationEntryPoint)
         .and()
           .authorizeRequests()
-          .antMatchers("/actuator/**").hasRole("ADMIN")
-          .antMatchers("/",
-            "/api/users/registration",
+//          .requestMatchers(EndpointRequest.to(MetricsEndpoint.class)).permitAll()
+          .mvcMatchers("/actuator/**").hasRole("ADMIN")
+          .mvcMatchers(HttpMethod.POST, "/api/users")
+            .permitAll()
+          .mvcMatchers("/",
             "/api/login",
             "/api/logout")
           .permitAll()

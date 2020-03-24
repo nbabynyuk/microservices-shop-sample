@@ -5,7 +5,6 @@ import static org.mockito.Mockito.when;
 
 import com.nb.payments.AppRoutingConfig;
 import com.nb.payments.entity.PaymentData;
-import com.nb.payments.functional.PaymentController;
 import com.nb.payments.functional.PaymentHandlerFunctions;
 import com.nb.payments.repo.PaymentRepo;
 import org.junit.Test;

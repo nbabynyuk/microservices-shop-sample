@@ -25,7 +25,6 @@ import org.springframework.web.context.WebApplicationContext;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
-@WebAppConfiguration
 @ActiveProfiles("test")
 public class ProductCatalogAppTests {
   @Autowired
@@ -37,7 +36,6 @@ public class ProductCatalogAppTests {
   public void init() {
     this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
   }
-
 
   @Test
   public void scenario_one() throws Exception {
@@ -72,5 +70,4 @@ public class ProductCatalogAppTests {
         .andExpect( jsonPath("$.size").value(20))
         .andReturn();
   }
-
 }

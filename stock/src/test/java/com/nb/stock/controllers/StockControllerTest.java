@@ -34,8 +34,5 @@ public class StockControllerTest {
         .body(Mono.just(value), String.class)
         .exchange()
         .expectStatus().isCreated();
-
   }
-
-
 }

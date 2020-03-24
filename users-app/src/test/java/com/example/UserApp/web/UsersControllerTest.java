@@ -42,7 +42,7 @@ public class UsersControllerTest {
     created.setId(5L);
     given(userService.createUser(any ())).willReturn(created);
 
-    this.mockMvc.perform(post("/api/users/registration")
+    this.mockMvc.perform(post("/api/users")
         .content("{"
             + "\"username\":\"client_1\","
             + "\"password\":\"p12345!\","
@@ -58,7 +58,7 @@ public class UsersControllerTest {
   public void createUser_validation_failed() throws Exception {
     given(userService.createUser(any ()))
         .willThrow(new PasswordMismatchException());
-    this.mockMvc.perform(post("/api/users/registration")
+    this.mockMvc.perform(post("/api/users")
         .content("{"
             + "\"username\":\"client_1\","
             + "\"password\":\"p12345!\","

@@ -1,6 +1,5 @@
 package com.example.UserApp.integration;
 
-
 import com.example.UserApp.dto.UserRegistrationRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
@@ -8,27 +7,24 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Profile;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
-@Profile("test")
+@ActiveProfiles("test")
+@AutoConfigureMockMvc
 public class IntegrationTest {
 
   @Autowired
-  private WebApplicationContext webApplicationContext;
-
   private MockMvc mockMvc;
 
   private final ObjectMapper mapper = new ObjectMapper();
@@ -38,9 +34,6 @@ public class IntegrationTest {
   @Before
   public void init() {
     MockitoAnnotations.initMocks(this);
-    this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
-        .apply(springSecurity())
-        .build();
   }
 
   @Test
@@ -54,7 +47,7 @@ public class IntegrationTest {
 
     String s = mapper.writeValueAsString(urr);
     MvcResult registrationResult = this.mockMvc.perform(
-        post("/api/users/registration")
+        post("/api/users/")
             .header("Content-Type", "application/json")
         .content(s)
     ).andExpect(status().isCreated())
@@ -86,7 +79,5 @@ public class IntegrationTest {
                 + "    }\n"
                 + "}")
     ).andExpect(status().isOk());
-
   }
-
 }

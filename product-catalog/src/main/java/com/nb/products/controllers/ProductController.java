@@ -16,20 +16,23 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping("/api/products")
 public class ProductController {
 
-  @Autowired
-  private ProductRepository productRepository;
+  private final ProductRepository productRepository;
 
-  @RequestMapping(path = "/api/products", method = GET)
+  public ProductController(ProductRepository productRepository) {
+    this.productRepository = productRepository;
+  }
+
+  @RequestMapping(method = GET)
   public Page<Product> productList(Pageable currentPage) {
     return productRepository.findAll(currentPage);
   }
 
-  @RequestMapping(path = "/api/products", method = POST)
+  @RequestMapping(method = POST)
   @ResponseStatus(value = HttpStatus.CREATED)
   public void addProduct(@Valid @RequestBody Product p) {
     productRepository.insert(p);
   }
-
 }
