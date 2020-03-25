@@ -1,19 +1,16 @@
 package com.nb.products;
 
-import com.nb.products.entity.Product;
 import com.nb.products.repository.ProductRepository;
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-public class ProductCatalogApp implements CommandLineRunner  {
+public class ProductCatalogApp implements ApplicationRunner {
 
   @Autowired
   private ProductRepository productRepository;
@@ -23,11 +20,9 @@ public class ProductCatalogApp implements CommandLineRunner  {
   }
 
   @Override
-  public void run(String... args) throws Exception {
-    if (args != null && args.length > 0 ) {
-      if (args[0].equalsIgnoreCase("generate-dummy-data") ) {
-        Utils.generateDummyProducts().forEach( p -> productRepository.insert(p));
-      }
+  public void run(ApplicationArguments args) throws Exception {
+    if(args.getOptionNames().contains("generate-dummy-data")){
+      Utils.generateDummyProducts().forEach( p -> productRepository.insert(p));
     }
   }
 }

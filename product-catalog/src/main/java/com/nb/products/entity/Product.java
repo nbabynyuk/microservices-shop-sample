@@ -1,17 +1,14 @@
 package com.nb.products.entity;
 
+import lombok.Data;
+
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Collection;
-import javax.validation.constraints.NotNull;
-import lombok.Data;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document
 @Data
-public class Product {
+class Product {
 
-  @Id
   private String id;
 
   @NotNull

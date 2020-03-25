@@ -1,14 +1,14 @@
 package com.nb.products;
 
-import com.nb.products.entity.Product;
+import com.nb.products.entity.ProductEntity;
 import java.math.BigDecimal;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class Utils {
+class Utils {
 
   private static final String[] productNames = new String[]{
       "Xiaomi Mi Notebook Pro 15.6;Ноутбук • Класичний • 15,6 • IPS • 1920x1080 "
@@ -23,12 +23,12 @@ public class Utils {
 
   };
 
-  public static Stream<Product> generateDummyProducts() {
-    final Random r = new Random();
+  static Stream<ProductEntity> generateDummyProducts() throws NoSuchAlgorithmException {
+    final Random r = SecureRandom.getInstance("NativePRNG");
 
     return Arrays.stream(productNames).map(s -> {
       String[] description = s.split(";");
-      Product p = new Product();
+      ProductEntity p = new ProductEntity();
       p.setName(description[0]);
       p.setDescription(description[1]);
       p.setCurrentPrice(new BigDecimal(description[2].trim()));
