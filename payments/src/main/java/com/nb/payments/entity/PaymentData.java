@@ -13,5 +13,4 @@ public class PaymentData extends PaymentRequest {
   @Id
   private String uuid;
 
-
 }

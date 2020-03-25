@@ -36,14 +36,14 @@ public class PaymentHandlerFunctions {
    return serverRequest.bodyToMono(PaymentData.class)
         .doOnNext(pd -> {
           Set<ConstraintViolation<PaymentData>> validationContstraints = validator.validate(pd);
-          if(validationContstraints.size() > 0) {
+          if(!validationContstraints.isEmpty()) {
             List<String> additionalInfo = validationContstraints.stream().map(vc -> format("Provided value %s for property %s is invalid. Reason: %s",
                 vc.getInvalidValue(), vc.getPropertyPath(), vc.getMessage()))
                 .collect(Collectors.toList());
             throw new ValidationViolationException(additionalInfo);
           }
         })
-        .map((paymentData) -> {
+        .map(paymentData -> {
           paymentData.setUuid(UUID.randomUUID().toString());
           paymentRepo.save(paymentData);
           logger.info(" saved payment data into repository");
@@ -53,11 +53,11 @@ public class PaymentHandlerFunctions {
           if (error instanceof ValidationViolationException) {
             ValidationViolationException e = (ValidationViolationException) error;
             ErrorResponse resp = new ErrorResponse(e.getMessage(), e.getAdditionalInfo());
-            logger.info(" received invalid input: " + e.toString());
+            logger.info(" received invalid input: {}", e.toString());
             return ServerResponse.status(HttpStatus.BAD_REQUEST)
                 .body(fromValue(resp));
           } else  {
-            logger.error("exception happened during processing payment data:" + error.getMessage());
+            logger.error("exception happened during processing payment data: {}", error.getMessage());
             ErrorResponse resp = new ErrorResponse(error.getMessage(), Collections.emptyList());
             return ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(fromValue(resp));

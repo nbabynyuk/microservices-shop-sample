@@ -10,6 +10,8 @@ import java.util.stream.Stream;
 
 class Utils {
 
+  private Utils(){}
+
   private static final String[] productNames = new String[]{
       "Xiaomi Mi Notebook Pro 15.6;Ноутбук • Класичний • 15,6 • IPS • 1920x1080 "
           + "• Intel Core i7-8550U ; 33635",
@@ -19,8 +21,6 @@ class Utils {
           + "Intel Core i7-8750H • 2,2-4,1 ГГц; 68698",
       "Xiaomi Mi Gaming Laptop 15.6 ;  Ноутбук • Класичний • 15,6\" • IPS • 1920x1080 • Intel Core i7-7700HQ • 2,8-3,8 ГГц"
           + ";39247"
-
-
   };
 
   static Stream<ProductEntity> generateDummyProducts() throws NoSuchAlgorithmException {

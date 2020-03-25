@@ -13,10 +13,12 @@ import com.example.UserApp.errors.UserNotFoundException;
 import com.example.UserApp.repo.SecurityRoleRepo;
 import com.example.UserApp.repo.UserRepository;
 import com.nb.common.CreditCardDTO;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +28,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 public class UserService implements UserDetailsService {
@@ -99,32 +100,50 @@ public class UserService implements UserDetailsService {
   @Transactional
   public void updatePaymentMethod(Long userId, PaymentMethodUpdateRequests r)
       throws UserNotFoundException {
-    userRepository.findById(userId).map(user -> {
-      final  CreditCardDTO card = r.getCreditCard();
-      Optional<CreditCard> existingCard = user.getCreditCards()
-          .stream()
-          .filter( c -> c.getCardNumber().equals(card.getCardNumber()))
-          .findFirst();
-      if (CreditCardOperations.ADD == r.getOperation()) {
-        existingCard.map( c -> {
-          c.setExpireAt(card.getExpireAt());
-          c.setCvcode(card.getCvcode());
-          return c;
-        }).orElseGet( () -> {
-          CreditCard c = new CreditCard(
-              card.getCardNumber(),
-              card.getExpireAt(),
-              card.getCvcode());
-          user.getCreditCards().add(c);
-          return c;
-        });
-      } else if( CreditCardOperations.REMOVE ==  r.getOperation() ) {
-        existingCard.ifPresent(creditCard -> user.getCreditCards().remove(creditCard));
+    Optional<UserEntity> existingUser = userRepository.findById(userId);
+    if (existingUser.isPresent()) {
+      final CreditCardDTO newCard = r.getCreditCard();
+      Optional<CreditCard> existingCard = findWhetherCardAlreadyExists(existingUser.get(), newCard);
+      if (existingCard.isPresent()) {
+        modifyUserCard(r, existingUser.get(), existingCard.get());
       } else {
-        throw new IllegalArgumentException();
+        createNewCard(r, existingUser.get(), newCard);
       }
-      userRepository.save(user);
-      return true;
-    }).orElseThrow(UserNotFoundException::new);
+      userRepository.save(existingUser.get());
+    } else {
+      throw new UserNotFoundException();
+    }
+  }
+
+  private Optional<CreditCard> findWhetherCardAlreadyExists(UserEntity user, CreditCardDTO newCard) {
+    return user.getCreditCards()
+        .stream()
+        .filter(c -> c.getCardNumber().equals(newCard.getCardNumber()))
+        .findAny();
+  }
+
+  private void createNewCard(PaymentMethodUpdateRequests r,
+                             UserEntity user,
+                             CreditCardDTO newCard) {
+    if (CreditCardOperations.ADD == r.getOperation()) {
+      user.getCreditCards().add(new CreditCard(
+          newCard.getCardNumber(),
+          newCard.getExpireAt(),
+          newCard.getCvcode()));
+    } else {
+      logger.warn("user {} required to delete non-existing card:",
+          user.getUsername());
+    }
+  }
+
+  private void modifyUserCard(PaymentMethodUpdateRequests r, UserEntity user, CreditCard card) {
+    if (CreditCardOperations.ADD == r.getOperation()) {
+      card.setExpireAt(r.getCreditCard().getExpireAt());
+      card.setCvcode(r.getCreditCard().getCvcode());
+    } else if (CreditCardOperations.REMOVE == r.getOperation()) {
+      user.getCreditCards().remove(card);
+    } else {
+      throw new IllegalArgumentException();
+    }
   }
 }

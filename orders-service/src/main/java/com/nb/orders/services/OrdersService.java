@@ -13,6 +13,8 @@ import com.nb.orders.services.handlers.OrderHandler;
 import com.nb.orders.services.handlers.PaymentProcessingHandler;
 import com.nb.orders.services.handlers.ProcessCompletionHandler;
 import com.nb.orders.services.handlers.StockProcessingHandler;
+
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -25,7 +27,7 @@ public class OrdersService {
 
   private Logger logger = LoggerFactory.getLogger(OrdersService.class);
 
-  private Map<ProcessingStage, OrderHandler> handlers = new HashMap<>();
+  private Map<ProcessingStage, OrderHandler> handlers = new EnumMap<>(ProcessingStage.class);
 
   public OrdersService(OrderAcceptedHandler handler,
       StockProcessingHandler stockHandler,
@@ -49,7 +51,7 @@ public class OrdersService {
   private Mono<ProcessingContext> processOrderStage(OrderRequest request,
       Mono<ProcessingContext> context) {
     return context.map(ctx -> {
-      logger.debug("processing context: " + ctx.toString());
+      logger.debug("processing context: {}", ctx.toString());
       if (ProcessingStage.PROCESSING_COMPLETE == ctx.getNextStage()) {
         return context;
       } else {

@@ -3,6 +3,8 @@ package com.example.UserApp;
 
 public class AppConstants {
 
+  private AppConstants() {}
+
   //security roles
   public static final String USER_ROLE_NAME = "ROLE_USER";
   public static final String ADMIN_ROLE_NAME = "ROLE_ADMIN";
