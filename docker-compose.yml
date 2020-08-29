@@ -1,14 +1,5 @@
 version: "2.1"
 services:
-  eureka-server:
-    build: ./discovery-service/
-    ports:
-      - 8761:8761
-    healthcheck:
-      test: ["CMD", "wget", "--spider", "http://127.0.0.1:8761/"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
   userappdb:
     image: mysql:5.7
     environment:
@@ -33,11 +24,8 @@ services:
     depends_on:
       userappdb:
         condition: service_healthy
-      eureka-server:
-        condition: service_healthy
     links:
       - userappdb
-      - eureka-server
     ports:
       - 8081:8080
     environment:
@@ -45,7 +33,6 @@ services:
       DB_USERNAME: "root"
       DB_HOST: userappdb
       DB_PORT: 3306
-      EUREKA_URL: http://eureka-server:8761/eureka
   productcatalog:
       build: ./product-catalog/
       depends_on:
@@ -53,13 +40,11 @@ services:
           condition: service_healthy
       links:
         - mongodb
-        - eureka-server
         - userapp
       environment:
         PRODUCT-DB-HOST: mongodb
         PRODUCT-DB-PORT: 27017
         PRODUCT-DB-NAME: "products"
-        eureka_url: http://eureka-server:8761/eureka
       ports:
         - 8082:8082
   payments:
@@ -69,9 +54,7 @@ services:
         condition: service_healthy
     links:
       - mongodb
-      - eureka-server
     environment:
       PAYMENTS_DB_URI: mongodb://mongodb:27017/payments
-      EUREKA_URL: http://eureka-server:8761/eureka
     ports:
       - 8083:8083

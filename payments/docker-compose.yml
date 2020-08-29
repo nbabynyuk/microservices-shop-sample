@@ -1,14 +1,5 @@
 version: "2.1"
 services:
-  eureka-server:
-    build: ../discovery-service/
-    ports:
-      - 8761:8761
-    healthcheck:
-      test: ["CMD", "wget", "--spider", "http://127.0.0.1:8761/"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
   mongodb:
     image: mongo:3.2
     ports:
@@ -24,9 +15,7 @@ services:
 #        condition: service_healthy
 #    links:
 #      - mongodb
-#      - eureka-server
 #    environment:
 #      PAYMENTS_DB_URI: mongodb://mongodb:27017/payments
-#      EUREKA_URL: http://eureka-server:8761/eureka
 #    ports:
 #      - 8083:8083

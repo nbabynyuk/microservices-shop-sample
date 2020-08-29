@@ -25,7 +25,6 @@
 
   <modules>
     <module>common</module>
-    <module>discovery-service</module>
     <module>product-catalog</module>
     <module>users-app</module>
     <module>orders-service</module>
