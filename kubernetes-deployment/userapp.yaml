@@ -44,8 +44,6 @@ spec:
                key: password
          - name: DB_HOST
            value: userapp-db
-         - name: EUREKA_URL
-           value: http://eureka-server:8761/eureka
          - name: DB_PORT
            value: "3306"
         ports:
