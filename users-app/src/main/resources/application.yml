@@ -15,13 +15,6 @@ spring:
   output:
     ansi:
       enabled: ALWAYS
-eureka:
-  instance:
-    leaseRenewalIntervalInSeconds: 1
-    leaseExpirationDurationInSeconds: 2
-  client:
-    serviceUrl:
-      defaultZone: ${eureka_url:http://eureka-server:8761/eureka/}
 management:
   endpoint:
     health:
