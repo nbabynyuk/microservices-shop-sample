@@ -1,7 +1,7 @@
 secretGenerator:
 - name: mysql-pass
   literals:
-  - password=require
+  - password=$(USER_APP_DB_PWD)
 resources:
     - mysql-deployment.yaml
     - userapp.yaml
