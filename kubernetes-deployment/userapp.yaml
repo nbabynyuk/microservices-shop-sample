@@ -32,7 +32,8 @@ spec:
         tier: backend
     spec:
       containers:
-      - image: microservices-shop-sample_userapp
+      - image: microservices-shop-sample/userapp
+        imagePullPolicy: Never
         name: userapp
         env:
          - name: DB_USERNAME
