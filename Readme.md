@@ -1,5 +1,4 @@
-### This is a sample project that emulates e-commerce  trading system
-
+### This is a sample project that emulates backend for  e-commerce app
 
 Demo project where following technologies are used: Spring Cloud, Spring Boot, Docker&Docker-Compose, Java 11,
 Maven, Kubernetes.
