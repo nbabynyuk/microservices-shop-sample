@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: stock
+  labels:
+    app: stock
+spec:
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8085
+  selector:
+    app: stock
+    tier: backend
+  type: LoadBalancer
+---
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: stock
+  labels:
+    app: stock
+spec:
+  selector:
+    matchLabels:
+      app: stock
+      tier: backend
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: stock
+        tier: backend
+    spec:
+      containers:
+        - image: microservices-shop-sample/stock
+          imagePullPolicy: Never
+          name: stock
+          ports:
+            - containerPort: 8085
+              name: stock
