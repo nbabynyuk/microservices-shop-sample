@@ -10,10 +10,3 @@ spring:
   data:
     mongodb:
       uri: ${PAYMENTS_DB_URI:mongodb://localhost:27017/payments}
-eureka:
-  instance:
-    leaseRenewalIntervalInSeconds: 1
-    leaseExpirationDurationInSeconds: 2
-  client:
-    serviceUrl:
-      defaultZone: ${EUREKA_URL:http://eureka-server:8761/eureka/}

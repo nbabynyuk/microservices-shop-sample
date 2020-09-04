@@ -1,24 +1,56 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo
+  labels:
+    name: mongo
+spec:
+  ports:
+    - port: 27017
+      targetPort: 27017
+  clusterIP: None
+  selector:
+    role: mongo
+---
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: mongodb-standalone
+  name: mongo
 spec:
-  serviceName: database
-  replicas: 1
   selector:
     matchLabels:
-      app: database
+      role: mongo
+      environment: test
+  serviceName: "mongo"
+  replicas: 1
   template:
     metadata:
       labels:
-        app: database
-        selector: mongodb-standalone
+        role: mongo
+        environment: test
     spec:
+      terminationGracePeriodSeconds: 10
       containers:
-        - name: mongodb-standalone
+        - name: mongo
           image: mongo:4.0
+          command:
+            - mongod
+            - "--bind_ip_all"
+          ports:
+            - containerPort: 27017
+          volumeMounts:
+            - name: mongo-persistent-storage
+              mountPath: /data/db
+        - name: mongo-sidecar
+          image: cvallance/mongo-k8s-sidecar
           env:
-            - name: MONGO_INITDB_ROOT_USERNAME
-              value: admin
-            - name: MONGO_INITDB_ROOT_PASSWORD
-              value: password      
+            - name: MONGO_SIDECAR_POD_LABELS
+              value: "role=mongo,environment=test"
+  volumeClaimTemplates:
+    - metadata:
+        name: mongo-persistent-storage
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 1Gi

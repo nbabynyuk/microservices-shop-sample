@@ -6,3 +6,4 @@ resources:
     - mysql-deployment.yaml
     - userapp.yaml
     - mongo-standalone.yml
+    - payments.yml

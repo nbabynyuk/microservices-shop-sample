@@ -11,14 +11,6 @@ spring:
       host: ${PRODUCT-DB-HOST:localhost}
       port: ${PRODUCT-DB-PORT:27017}
       database: ${PRODUCT-DB-NAME:products}
-eureka:
-  instance:
-    leaseRenewalIntervalInSeconds: 1
-    leaseExpirationDurationInSeconds: 2
-  client:
-    serviceUrl:
-      defaultZone: ${eureka_url:http://localhost:8761/eureka/}
-
 ---
 
 spring:

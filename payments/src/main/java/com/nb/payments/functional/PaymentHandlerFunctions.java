@@ -34,11 +34,12 @@ public class PaymentHandlerFunctions {
 
   public Mono<ServerResponse> save(ServerRequest serverRequest) {
    return serverRequest.bodyToMono(PaymentData.class)
-        .doOnNext(pd -> {
-          Set<ConstraintViolation<PaymentData>> validationContstraints = validator.validate(pd);
+        .doOnNext(paymentData -> {
+          Set<ConstraintViolation<PaymentData>> validationContstraints = validator.validate(paymentData);
           if(!validationContstraints.isEmpty()) {
-            List<String> additionalInfo = validationContstraints.stream().map(vc -> format("Provided value %s for property %s is invalid. Reason: %s",
-                vc.getInvalidValue(), vc.getPropertyPath(), vc.getMessage()))
+            List<String> additionalInfo = validationContstraints.stream().map(
+                constraint -> format("Provided value %s for property %s is invalid. Reason: %s", 
+                    constraint.getInvalidValue(), constraint.getPropertyPath(), constraint.getMessage()))
                 .collect(Collectors.toList());
             throw new ValidationViolationException(additionalInfo);
           }
