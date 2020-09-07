@@ -8,11 +8,8 @@ spring:
     name: ProductCatalog
   data:
     mongodb:
-      host: ${PRODUCT-DB-HOST:localhost}
-      port: ${PRODUCT-DB-PORT:27017}
-      database: ${PRODUCT-DB-NAME:products}
+      uri: ${PRODUCTS_DB_URI:mongodb://localhost:27017/products}
 ---
-
 spring:
   profiles: test
   data:

@@ -4,6 +4,8 @@ secretGenerator:
   - password=$(USER_APP_DB_PWD)
 resources:
     - mysql-deployment.yaml
-    - userapp.yaml
     - mongo-standalone.yml
+    - userapp.yaml
     - payments.yml
+#    - stock-service.yml
+#    - product-catalog.yml

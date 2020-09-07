@@ -1,0 +1,45 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: products-catalog
+  labels:
+    app: products-catalog
+spec:
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8082
+  selector:
+    app: products-catalog
+    tier: backend
+  type: LoadBalancer
+---
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: products-catalog
+  labels:
+    app: products-catalog
+spec:
+  selector:
+    matchLabels:
+      app: products-catalog
+      tier: backend
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: products-catalog
+        tier: backend
+    spec:
+      containers:
+        - image: microservices-shop-sample/product-catalog
+          imagePullPolicy: Never
+          name: payments
+          env:
+            - name: PRODUCTS_DB_URI
+              value: mongodb://mongo-0.mongo:27017/products
+          ports:
+            - containerPort: 8082
+              name: payments
