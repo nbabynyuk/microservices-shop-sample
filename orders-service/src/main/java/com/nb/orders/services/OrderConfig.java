@@ -1,7 +1,7 @@
 package com.nb.orders.services;
 
-import com.nb.orders.remote.PaymentClient;
-import com.nb.orders.remote.StockClient;
+import com.nb.orders.remote.PaymentsRemoteRepository;
+import com.nb.orders.remote.StockRemoteRepository;
 import com.nb.orders.repo.OrdersRepository;
 import com.nb.orders.services.handlers.OrderAcceptedHandler;
 import com.nb.orders.services.handlers.PaymentProcessingHandler;
@@ -10,25 +10,24 @@ import com.nb.orders.services.handlers.StockProcessingHandler;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.reactive.function.client.WebClient;
 
 @Configuration
 public class OrderConfig {
-
-  @Value("${orders.merchantAccount}")
-  private String merchantAccount;
-
+  
   @Bean
   public OrderAcceptedHandler orderAcceptedHandler(OrdersRepository r) {
     return new OrderAcceptedHandler(r);
   }
 
   @Bean
-  public StockProcessingHandler stockProcessingHandler(StockClient stockClient) {
-    return new StockProcessingHandler(stockClient);
+  public StockProcessingHandler stockProcessingHandler(StockRemoteRepository stockRemoteRepository) {
+    return new StockProcessingHandler(stockRemoteRepository);
   }
 
   @Bean
-  public PaymentProcessingHandler paymentProcessingHandler(PaymentClient client) {
+  public PaymentProcessingHandler paymentProcessingHandler(PaymentsRemoteRepository client, 
+                                                           @Value("MERCHANT_ACCOUNT")String merchantAccount) {
     return new PaymentProcessingHandler(client, merchantAccount);
   }
 
@@ -43,5 +42,18 @@ public class OrderConfig {
       PaymentProcessingHandler paymentHandler,
       ProcessCompletionHandler completionHandler) {
     return new OrdersService(handler, stockHandler, paymentHandler, completionHandler);
+  }
+  
+  @Bean
+  public PaymentsRemoteRepository paymentsRemoteRepository(@Value("${PAYMENTS_SERVICE_URI}") String paymentsServiceBaseUri,
+                                                           WebClient.Builder webClientBuilder) {
+    assert null != paymentsServiceBaseUri;
+    WebClient webClient = webClientBuilder.baseUrl(paymentsServiceBaseUri).build();
+    return new PaymentsRemoteRepository(webClient);
+  }
+  
+  @Bean
+  public StockRemoteRepository stockRemoteRepository(@Value("${STOCK_SERVICE_URI}") String stockServiceUri) {
+    return new StockRemoteRepository();
   }
 }

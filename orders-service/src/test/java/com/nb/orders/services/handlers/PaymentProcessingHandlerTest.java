@@ -14,7 +14,7 @@ import com.nb.common.CreditCardDTO;
 import com.nb.common.OperationResult;
 import com.nb.common.PaymentRequest;
 import com.nb.orders.dto.OrderRequest;
-import com.nb.orders.remote.PaymentClient;
+import com.nb.orders.remote.PaymentsRemoteRepository;
 import com.nb.orders.services.ProcessingContext;
 import java.math.BigDecimal;
 import org.junit.Before;
@@ -28,7 +28,7 @@ import reactor.test.StepVerifier;
 public class PaymentProcessingHandlerTest {
 
   @Mock
-  private PaymentClient client;
+  private PaymentsRemoteRepository client;
 
   private PaymentProcessingHandler paymentHandler;
 

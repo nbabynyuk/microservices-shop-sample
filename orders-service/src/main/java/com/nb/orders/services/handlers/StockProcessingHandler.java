@@ -5,7 +5,7 @@ import com.nb.common.ShipmentItem;
 import com.nb.common.ShipmentRequest;
 import com.nb.orders.dto.OrderRequest;
 import com.nb.orders.entity.ProcessingStage;
-import com.nb.orders.remote.StockClient;
+import com.nb.orders.remote.StockRemoteRepository;
 import com.nb.orders.services.ProcessingContext;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -13,9 +13,9 @@ import reactor.core.publisher.Mono;
 
 public class StockProcessingHandler implements OrderHandler {
 
-  private final StockClient client;
+  private final StockRemoteRepository client;
 
-  public StockProcessingHandler(StockClient client) {
+  public StockProcessingHandler(StockRemoteRepository client) {
     this.client = client;
   }
 

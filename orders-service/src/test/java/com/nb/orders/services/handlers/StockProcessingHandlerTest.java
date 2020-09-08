@@ -9,7 +9,7 @@ import com.nb.common.OperationResult;
 import com.nb.common.ShipmentRequest;
 import com.nb.orders.dto.OrderRequest;
 import com.nb.orders.entity.ProcessingStage;
-import com.nb.orders.remote.StockClient;
+import com.nb.orders.remote.StockRemoteRepository;
 import com.nb.orders.repo.OrdersRepository;
 import com.nb.orders.services.ProcessingContext;
 import org.junit.Before;
@@ -27,7 +27,7 @@ public class StockProcessingHandlerTest {
   private OrdersRepository repository;
 
   @Mock
-  private StockClient stockClient;
+  private StockRemoteRepository stockRemoteRepository;
 
   private StockProcessingHandler stockProcessingHandler;
 
@@ -35,7 +35,7 @@ public class StockProcessingHandlerTest {
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
-    stockProcessingHandler = new StockProcessingHandler(stockClient);
+    stockProcessingHandler = new StockProcessingHandler(stockRemoteRepository);
   }
 
   @Test
@@ -47,7 +47,7 @@ public class StockProcessingHandlerTest {
     OrderRequest request = OrderAcceptedHandlerTest.createOrderRequestForTests();
     Mono<ProcessingContext> ctx = Mono.just(new ProcessingContext(orderID,
         ProcessingStage.STOCK_RESERVATION));
-    when(stockClient.processShipmentRequest(argThat(
+    when(stockRemoteRepository.processShipmentRequest(argThat(
         new ShipmentRequestMatcher(REF_ADDRESS, REF_USER_ID)
     ))).thenReturn(new OperationResult(reservationUUID));
 

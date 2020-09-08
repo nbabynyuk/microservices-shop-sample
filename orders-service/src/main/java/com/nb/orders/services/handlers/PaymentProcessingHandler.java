@@ -4,19 +4,19 @@ import com.nb.common.OperationResult;
 import com.nb.common.PaymentRequest;
 import com.nb.orders.dto.OrderRequest;
 import com.nb.orders.entity.ProcessingStage;
-import com.nb.orders.remote.PaymentClient;
+import com.nb.orders.remote.PaymentsRemoteRepository;
 import com.nb.orders.services.ProcessingContext;
 import java.math.BigDecimal;
 import reactor.core.publisher.Mono;
 
 public class PaymentProcessingHandler implements OrderHandler {
 
-  private final PaymentClient paymentClient;
+  private final PaymentsRemoteRepository paymentsRemoteRepository;
 
   private final String merchantAccount;
 
-  public PaymentProcessingHandler(PaymentClient paymentClient, String merchantAccount) {
-    this.paymentClient = paymentClient;
+  public PaymentProcessingHandler(PaymentsRemoteRepository paymentsRemoteRepository, String merchantAccount) {
+    this.paymentsRemoteRepository = paymentsRemoteRepository;
     this.merchantAccount = merchantAccount;
   }
 
@@ -30,7 +30,7 @@ public class PaymentProcessingHandler implements OrderHandler {
       PaymentRequest paymentRequest = new PaymentRequest(request.getCreditCard(),
           merchantAccount,
           chargedAmount);
-      OperationResult result = paymentClient.process(paymentRequest);
+      OperationResult result = paymentsRemoteRepository.process(paymentRequest);
       return new ProcessingContext(stageCtx, ProcessingStage.PAYMENTS_CONFIRMED, result.getUuid());
     });
   }
