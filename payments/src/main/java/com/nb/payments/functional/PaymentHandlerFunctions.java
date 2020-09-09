@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 import static org.springframework.web.reactive.function.BodyInserters.fromValue;
+import static reactor.core.publisher.Mono.just;
 
 public class PaymentHandlerFunctions {
 
@@ -62,7 +63,7 @@ public class PaymentHandlerFunctions {
     Mono<Mono<ServerResponse>> serverResponse = paymentRepo.save(paymentData).map(data -> {
       logger.info(" saved payment data into repository, {}", uuid);
       return ServerResponse.created(serverRequest.uri())
-          .body(Mono.just(new OperationResult(uuid)), OperationResult.class);
+          .body(just(new OperationResult(uuid)), OperationResult.class);
     });
     return serverResponse.flatMap(x -> x);
   }

@@ -20,6 +20,7 @@ import java.io.InputStream;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
+import static reactor.core.publisher.Mono.just;
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = {
@@ -43,7 +44,7 @@ public class PaymentAppTest {
             .uri("/api/payments")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-                .body(Mono.just(readMockData()), String.class)
+                .body(just(readMockData()), String.class)
             .exchange()
             .expectStatus()
                 .isCreated()
@@ -54,7 +55,7 @@ public class PaymentAppTest {
     private Mono<PaymentData> createMockOfResponseData() {
         PaymentData pd = new PaymentData();
         pd.setUuid("xxx-111");
-        return Mono.just(pd);
+        return just(pd);
     }
 
     private String readMockData() throws IOException {

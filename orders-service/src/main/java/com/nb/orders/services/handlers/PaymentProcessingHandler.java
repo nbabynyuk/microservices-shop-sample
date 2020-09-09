@@ -30,8 +30,9 @@ public class PaymentProcessingHandler implements OrderHandler {
       PaymentRequest paymentRequest = new PaymentRequest(request.getCreditCard(),
           merchantAccount,
           chargedAmount);
-      OperationResult result = paymentsRemoteRepository.process(paymentRequest);
-      return new ProcessingContext(stageCtx, ProcessingStage.PAYMENTS_CONFIRMED, result.getUuid());
-    });
+      return paymentsRemoteRepository.process(paymentRequest)
+          .map(operationResult -> 
+              new ProcessingContext(stageCtx, ProcessingStage.PAYMENTS_CONFIRMED, operationResult.getUuid()));
+    }).flatMap(ctx -> ctx);
   }
 }

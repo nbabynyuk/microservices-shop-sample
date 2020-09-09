@@ -26,6 +26,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
+import static reactor.core.publisher.Mono.just;
+
 @RunWith(MockitoJUnitRunner.class)
 public class OrdersServiceTest {
 
@@ -66,16 +68,17 @@ public class OrdersServiceTest {
 
     Mockito.when(ordersRepository.save(any())).then(invocationOnMock -> {
       Order order = (Order) invocationOnMock.getArguments()[0];
-      return Mono.just(order);
+      return just(order);
     });
     Mockito.when(paymentsRemoteRepository.process(any()))
-        .thenReturn(new OperationResult(REF_PAYMENT_UUID));
+        .thenReturn(just(new OperationResult(REF_PAYMENT_UUID)));
     Mockito.when(stockService.processShipmentRequest(any()))
         .thenReturn(new OperationResult(REF_SHIPMENT_UUID));
     Mockito.when(ordersRepository.findById(anyString()))
         .thenReturn(
-            Mono.just(
-                new Order(REF_ORDER_UUID, request.getUserId(), request.getPurchases())));
+            just(new Order(REF_ORDER_UUID, 
+                request.getUserId(), 
+                request.getPurchases())));
     Mono<Order> result = ordersService.processOrder(request);
 
     StepVerifier.create(result)
