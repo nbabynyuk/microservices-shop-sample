@@ -17,7 +17,7 @@ public class PaymentsApplication {
   }
 
   @Bean
-  public PaymentHandlerFunctions fooController(PaymentRepo paymentRepo) {
+  public PaymentHandlerFunctions paymentsHandlerFunctions(PaymentRepo paymentRepo) {
     return new PaymentHandlerFunctions(paymentRepo, localValidatorFactoryBean());
   }
 
