@@ -27,7 +27,7 @@ public class StockController {
         return Map.of("name", appName, "version", "1.0");
     }
 
-    @PostMapping (value = "/api/shipmentRequest"
+    @PostMapping (value = "/api/delivery"
         , consumes = MediaType.APPLICATION_JSON_VALUE
         , produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)

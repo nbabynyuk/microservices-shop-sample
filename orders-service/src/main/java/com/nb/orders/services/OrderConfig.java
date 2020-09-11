@@ -27,7 +27,7 @@ public class OrderConfig {
 
   @Bean
   public PaymentProcessingHandler paymentProcessingHandler(PaymentsRemoteRepository client, 
-                                                           @Value("MERCHANT_ACCOUNT")String merchantAccount) {
+                                                           @Value("orders.MERCHANT_ACCOUNT")String merchantAccount) {
     return new PaymentProcessingHandler(client, merchantAccount);
   }
 
@@ -45,7 +45,7 @@ public class OrderConfig {
   }
   
   @Bean
-  public PaymentsRemoteRepository paymentsRemoteRepository(@Value("${PAYMENTS_SERVICE_URI}") String paymentsServiceBaseUri,
+  public PaymentsRemoteRepository paymentsRemoteRepository(@Value("${orders.PAYMENTS_SERVICE_URI}") String paymentsServiceBaseUri,
                                                            WebClient.Builder webClientBuilder) {
     assert null != paymentsServiceBaseUri;
     WebClient webClient = webClientBuilder.baseUrl(paymentsServiceBaseUri).build();
@@ -53,7 +53,10 @@ public class OrderConfig {
   }
   
   @Bean
-  public StockRemoteRepository stockRemoteRepository(@Value("${STOCK_SERVICE_URI}") String stockServiceUri) {
-    return new StockRemoteRepository();
+  public StockRemoteRepository stockRemoteRepository(@Value("${orders.STOCK_SERVICE_URI}") String stockServiceUri,
+                                                     WebClient.Builder webClientBuilder) {
+    assert null != stockServiceUri;
+    WebClient webClient = webClientBuilder.baseUrl(stockServiceUri).build();
+    return new StockRemoteRepository(webClient);
   }
 }

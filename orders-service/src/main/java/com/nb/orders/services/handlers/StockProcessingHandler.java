@@ -29,11 +29,12 @@ public class StockProcessingHandler implements OrderHandler {
       ShipmentRequest shipmentRequest = new ShipmentRequest(request.getDeliveryAddress(),
           request.getUserId(),
           shipmentItems);
-      OperationResult operationResult = client.processShipmentRequest(shipmentRequest);
-      return new ProcessingContext(ctx.getOrderUuid(),
-          ProcessingStage.PAYMENTS_PROCESSING,
-          operationResult.getUuid());
-    });
+      return client.processShipmentRequest(shipmentRequest)
+          .map( operationResult -> new ProcessingContext(ctx.getOrderUuid(),
+              ProcessingStage.PAYMENTS_PROCESSING,
+              operationResult.getUuid()));
+          
+    }).flatMap( x -> x);
 
   }
 }

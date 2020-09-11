@@ -49,7 +49,7 @@ public class StockProcessingHandlerTest {
         ProcessingStage.STOCK_RESERVATION));
     when(stockRemoteRepository.processShipmentRequest(argThat(
         new ShipmentRequestMatcher(REF_ADDRESS, REF_USER_ID)
-    ))).thenReturn(new OperationResult(reservationUUID));
+    ))).thenReturn(Mono.just(new OperationResult(reservationUUID)));
 
     Mono<ProcessingContext> processingResult = stockProcessingHandler.process(request, ctx);
 

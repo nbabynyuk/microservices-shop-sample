@@ -9,9 +9,10 @@ spring:
   data:
     mongodb:
       uri: ${ORDERS_DB_URI:mongodb://localhost:27017/orders}
-MERCHANT_ACCOUNT: ${MERCHANT_ACCOUNT:"5555-0710"}
-PAYMENTS_SERVICE_URI: ${PAYMENTS_SERVICE_URI:http://payments:8083}
-STOCK_SERVICE_URI: ${STOCK_SERVICE_URI:http://stock:8082}
+orders:
+  MERCHANT_ACCOUNT: ${MERCHANT_ACCOUNT:"5555-0710"}
+  PAYMENTS_SERVICE_URI: ${PAYMENTS_SERVICE_URI:http://payments:8083}
+  STOCK_SERVICE_URI: ${STOCK_SERVICE_URI:http://stock:8082}
 
 ---
 spring:

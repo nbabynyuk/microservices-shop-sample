@@ -73,7 +73,7 @@ public class OrdersServiceTest {
     Mockito.when(paymentsRemoteRepository.process(any()))
         .thenReturn(just(new OperationResult(REF_PAYMENT_UUID)));
     Mockito.when(stockService.processShipmentRequest(any()))
-        .thenReturn(new OperationResult(REF_SHIPMENT_UUID));
+        .thenReturn(Mono.just(new OperationResult(REF_SHIPMENT_UUID)));
     Mockito.when(ordersRepository.findById(anyString()))
         .thenReturn(
             just(new Order(REF_ORDER_UUID, 
