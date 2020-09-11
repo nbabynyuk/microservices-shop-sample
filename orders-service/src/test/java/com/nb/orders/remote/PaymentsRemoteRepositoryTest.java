@@ -5,6 +5,7 @@ import com.nb.common.PaymentRequest;
 import com.nb.orders.services.OrdersServiceTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -15,7 +16,6 @@ import java.math.BigDecimal;
 
 import static com.nb.orders.TestUtils.loadReferenceResourceStub;
 import static java.util.Objects.requireNonNull;
-import static org.junit.Assert.fail;
 
 class PaymentsRemoteRepositoryTest {
 
@@ -26,19 +26,24 @@ class PaymentsRemoteRepositoryTest {
     @BeforeEach
     void setUp() {
         WebClient webClient = WebClient.builder()
-            .exchangeFunction(clientRequest ->
-                Mono.just(ClientResponse.create(HttpStatus.OK)
-                    .header("content-type", "application/json")
-                    .body(requireNonNull(
-                        loadReferenceResourceStub("remote-stubs/payments/create-payment.json")))
-                    .build())
-            ).build();
+            .exchangeFunction(clientRequest -> {
+                if ("/api/payments".equals(clientRequest.url().toString())
+                    && clientRequest.method().equals(HttpMethod.POST)) {
+                    return Mono.just(ClientResponse.create(HttpStatus.OK)
+                        .header("content-type", "application/json")
+                        .body(requireNonNull(
+                            loadReferenceResourceStub("remote-stubs/payments/create-payment.json")))
+                        .build());
+                } else {
+                    return Mono.just(ClientResponse.create(HttpStatus.NOT_FOUND).build());
+                }
+            }).build();
         paymentsRepository = new PaymentsRemoteRepository(webClient);
 
     }
 
     @Test
-    void process() {
+    void whenValidPayloadIsProvidedThenRemoteRepositoryReached() {
         PaymentRequest paymentRequest = new PaymentRequest(
             OrdersServiceTest.CREDIT_CARD,
             "123",
@@ -48,10 +53,5 @@ class PaymentsRemoteRepositoryTest {
         StepVerifier.create(futureOperationResult)
             .expectNextMatches(operationResult -> operationResult.getUuid().equals(REFERENCE_PAYMENTS_GUID))
             .verifyComplete();
-    }
-
-    @Test
-    void executeRollback() {
-        fail("Not yet implemented");
     }
 }
