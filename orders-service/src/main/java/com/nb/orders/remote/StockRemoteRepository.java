@@ -12,6 +12,7 @@ import static reactor.core.publisher.Mono.just;
 
 public class StockRemoteRepository {
 
+  public static final String DELIVERY_URI = "/api/delivery";
   private final WebClient webClient;
 
   public StockRemoteRepository(WebClient webClient) {
@@ -21,7 +22,7 @@ public class StockRemoteRepository {
   public Mono<OperationResult> processShipmentRequest(ShipmentRequest request) {
     return webClient
         .post()
-        .uri("/api/delivery")
+        .uri(DELIVERY_URI)
         .body(BodyInserters.fromProducer(just(request),
             ShipmentRequest.class
         ))

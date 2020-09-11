@@ -13,11 +13,10 @@ import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.util.List;
-import java.util.UUID;
 
 import static com.nb.orders.TestUtils.loadReferenceResourceStub;
+import static com.nb.orders.remote.StockRemoteRepository.DELIVERY_URI;
 import static java.util.Objects.requireNonNull;
-import static org.junit.jupiter.api.Assertions.*;
 
 class StockRemoteRepositoryTest {
 
@@ -32,9 +31,8 @@ class StockRemoteRepositoryTest {
         WebClient webClient = WebClient.builder()
             //TODO: implement verification of input parameters,  currently there is no checks what was recievied 
             // as input
-            // TODO: clean up constants
             .exchangeFunction(clientRequest -> {
-                if ("/api/delivery".equals(clientRequest.url().toString())
+                if (DELIVERY_URI.equals(clientRequest.url().toString())
                     && clientRequest.method().equals(HttpMethod.POST)) {
                     return Mono.just(ClientResponse.create(HttpStatus.OK)
                         .header("content-type", "application/json")

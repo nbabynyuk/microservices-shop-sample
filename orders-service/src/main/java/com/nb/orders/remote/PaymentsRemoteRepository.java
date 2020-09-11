@@ -14,6 +14,7 @@ import static reactor.core.publisher.Mono.just;
 
 public class PaymentsRemoteRepository {
 
+  public static final String PAYMENTS_URI = "/api/payments";
   private final WebClient webClient;
 
   public PaymentsRemoteRepository(WebClient webClient) {
@@ -23,7 +24,7 @@ public class PaymentsRemoteRepository {
   public Mono<OperationResult> process(PaymentRequest request){
     return webClient
         .post()
-        .uri("/api/payments")
+        .uri(PAYMENTS_URI)
         .body(BodyInserters.fromProducer(just(request),
             PaymentRequest.class
         ))

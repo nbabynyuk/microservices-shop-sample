@@ -5,8 +5,10 @@ import com.nb.common.PaymentRequest;
 import com.nb.orders.services.OrdersServiceTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -15,6 +17,7 @@ import reactor.test.StepVerifier;
 import java.math.BigDecimal;
 
 import static com.nb.orders.TestUtils.loadReferenceResourceStub;
+import static com.nb.orders.remote.PaymentsRemoteRepository.PAYMENTS_URI;
 import static java.util.Objects.requireNonNull;
 
 class PaymentsRemoteRepositoryTest {
@@ -27,10 +30,10 @@ class PaymentsRemoteRepositoryTest {
     void setUp() {
         WebClient webClient = WebClient.builder()
             .exchangeFunction(clientRequest -> {
-                if ("/api/payments".equals(clientRequest.url().toString())
+                if (PAYMENTS_URI.equals(clientRequest.url().toString())
                     && clientRequest.method().equals(HttpMethod.POST)) {
                     return Mono.just(ClientResponse.create(HttpStatus.OK)
-                        .header("content-type", "application/json")
+                        .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
                         .body(requireNonNull(
                             loadReferenceResourceStub("remote-stubs/payments/create-payment.json")))
                         .build());
