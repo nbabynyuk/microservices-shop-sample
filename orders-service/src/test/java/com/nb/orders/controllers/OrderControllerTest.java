@@ -1,9 +1,11 @@
 package com.nb.orders.controllers;
 
 
+import static com.nb.orders.TestUtils.loadReferenceResourceStub;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import com.nb.orders.TestUtils;
 import com.nb.orders.entity.Order;
 import com.nb.orders.services.OrdersService;
 import org.junit.Before;
@@ -42,29 +44,16 @@ public class OrderControllerTest {
       o.setUuid("xxxx");
       return Mono.just(o);
     });
+    
+    String createOrderPayload = loadReferenceResourceStub("requests-samples/orders/create-order.json");
 
     webTestClient
         .post()
         .uri("/api/orders")
         .contentType(MediaType.APPLICATION_JSON)
-        .body(Mono.just("{ "
-            + "       \"userId\":5543"
-            + "       , \"purchases\":["
-            + "                {"
-            + "                \"productId\":\"tested_product\","
-            + "                        \"quantity\":1"
-            + "                 }"
-            + "           ],"
-            + "           \"creditCard\" : {"
-            + "             \"cardNumber\": \"xxx-yyy-zz\","
-            + "             \"expireAt\" : \"02/19\","
-            + "             \"cvcode\": \"111\""
-            + "            },"
-            + "            \"deliveryAddress\": \"xxxxffdfd, Street 5, 32\""
-            + "}"), String.class)
+        .body(Mono.just(createOrderPayload), String.class)
         .exchange()
         .expectStatus().isCreated();
-
   }
 
   @Test
