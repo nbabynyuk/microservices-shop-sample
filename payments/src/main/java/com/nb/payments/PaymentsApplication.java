@@ -9,6 +9,8 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 import javax.validation.Validator;
 
+// TODO: implement api for rollback
+
 @SpringBootApplication
 public class PaymentsApplication {
 
@@ -17,7 +19,7 @@ public class PaymentsApplication {
   }
 
   @Bean
-  public PaymentHandlerFunctions fooController(PaymentRepo paymentRepo) {
+  public PaymentHandlerFunctions paymentsHandlerFunctions(PaymentRepo paymentRepo) {
     return new PaymentHandlerFunctions(paymentRepo, localValidatorFactoryBean());
   }
 

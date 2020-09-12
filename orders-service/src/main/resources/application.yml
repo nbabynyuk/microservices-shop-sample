@@ -8,21 +8,13 @@ spring:
     name: OrdersService
   data:
     mongodb:
-      host: ${PRODUCT-DB-HOST:127.0.0.1}
-      port: ${PRODUCT-DB-PORT:27017}
-      database: ${PRODUCT-DB-NAME:orders}
-eureka:
-  instance:
-    leaseRenewalIntervalInSeconds: 1
-    leaseExpirationDurationInSeconds: 2
-  client:
-    serviceUrl:
-      defaultZone: ${eureka_url:http://localhost:8761/eureka/}
+      uri: ${ORDERS_DB_URI:mongodb://localhost:27017/orders}
 orders:
-  merchantAccount: ${MERCHANT_ACCOUNT:"5555-0710"}
+  MERCHANT_ACCOUNT: ${MERCHANT_ACCOUNT:"5555-0710"}
+  PAYMENTS_SERVICE_URI: ${PAYMENTS_SERVICE_URI:http://payments:8083}
+  STOCK_SERVICE_URI: ${STOCK_SERVICE_URI:http://stock:8082}
 
 ---
-
 spring:
   profiles: test
   data:

@@ -20,7 +20,8 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <java.version>11</java.version>
-    <docker.image.prefix>mssamples</docker.image.prefix>
+    <docker.image.prefix>microservices-shop-sample</docker.image.prefix>
+    <dockerfile-maven-version>1.3.2</dockerfile-maven-version>
   </properties>
 
   <modules>

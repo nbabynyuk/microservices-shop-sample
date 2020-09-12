@@ -1,0 +1,9 @@
+{
+  "paymentFrom": {
+    "cardNumber": "xxxx-yyyy-zzzz",
+    "expireAt": "02/19",
+    "cvcode": "111"
+  },
+  "paymentTo": "999-777-0",
+  "amount": 50.322
+}

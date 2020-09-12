@@ -1,5 +1,6 @@
 package com.nb.payments.functional;
 
+import com.nb.common.OperationResult;
 import com.nb.payments.entity.PaymentData;
 import com.nb.payments.repo.PaymentRepo;
 import org.slf4j.Logger;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 import static org.springframework.web.reactive.function.BodyInserters.fromValue;
+import static reactor.core.publisher.Mono.just;
 
 public class PaymentHandlerFunctions {
 
@@ -34,35 +36,47 @@ public class PaymentHandlerFunctions {
 
   public Mono<ServerResponse> save(ServerRequest serverRequest) {
    return serverRequest.bodyToMono(PaymentData.class)
-        .doOnNext(pd -> {
-          Set<ConstraintViolation<PaymentData>> validationContstraints = validator.validate(pd);
-          if(!validationContstraints.isEmpty()) {
-            List<String> additionalInfo = validationContstraints.stream().map(vc -> format("Provided value %s for property %s is invalid. Reason: %s",
-                vc.getInvalidValue(), vc.getPropertyPath(), vc.getMessage()))
-                .collect(Collectors.toList());
-            throw new ValidationViolationException(additionalInfo);
-          }
-        })
-        .map(paymentData -> {
-          paymentData.setUuid(UUID.randomUUID().toString());
-          paymentRepo.save(paymentData);
-          logger.info(" saved payment data into repository");
-          return ServerResponse.created(serverRequest.uri()).build();
-        }).flatMap(x -> x)
-        .onErrorResume( error -> {
-          if (error instanceof ValidationViolationException) {
-            ValidationViolationException e = (ValidationViolationException) error;
-            ErrorResponse resp = new ErrorResponse(e.getMessage(), e.getAdditionalInfo());
-            logger.info(" received invalid input: {}", e.toString());
-            return ServerResponse.status(HttpStatus.BAD_REQUEST)
-                .body(fromValue(resp));
-          } else  {
-            logger.error("exception happened during processing payment data: {}", error.getMessage());
-            ErrorResponse resp = new ErrorResponse(error.getMessage(), Collections.emptyList());
-            return ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(fromValue(resp));
-          }
-        });
+       .doOnNext(this::validateRequest)
+       .map(paymentData -> save(serverRequest, paymentData))
+       .flatMap(x -> x)
+       .onErrorResume(this::handleErrors);
+  }
+
+  private Mono<ServerResponse> handleErrors(Throwable error) {
+    if (error instanceof ValidationViolationException) {
+      ValidationViolationException e = (ValidationViolationException) error;
+      ErrorResponse resp = new ErrorResponse(e.getMessage(), e.getAdditionalInfo());
+      logger.info(" received invalid input: {}", e.toString());
+      return ServerResponse.status(HttpStatus.BAD_REQUEST)
+          .body(fromValue(resp));
+    } else  {
+      logger.error("exception happened during processing payment data: {}", error.getMessage());
+      ErrorResponse resp = new ErrorResponse(error.getMessage(), Collections.emptyList());
+      return ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .body(fromValue(resp));
+    }
+  }
+
+  private Mono<ServerResponse> save(ServerRequest serverRequest, PaymentData paymentData) {
+    String uuid = UUID.randomUUID().toString();
+    paymentData.setUuid(uuid);
+    Mono<Mono<ServerResponse>> serverResponse = paymentRepo.save(paymentData).map(data -> {
+      logger.info(" saved payment data into repository, {}", uuid);
+      return ServerResponse.created(serverRequest.uri())
+          .body(just(new OperationResult(uuid)), OperationResult.class);
+    });
+    return serverResponse.flatMap(x -> x);
+  }
+
+  private void validateRequest(PaymentData paymentData) {
+    Set<ConstraintViolation<PaymentData>> validationContstraints = validator.validate(paymentData);
+    if(!validationContstraints.isEmpty()) {
+      List<String> additionalInfo = validationContstraints.stream().map(
+          constraint -> format("Provided value %s for property %s is invalid. Reason: %s", 
+              constraint.getInvalidValue(), constraint.getPropertyPath(), constraint.getMessage()))
+          .collect(Collectors.toList());
+      throw new ValidationViolationException(additionalInfo);
+    }
   }
 
   private static class ValidationViolationException extends RuntimeException {

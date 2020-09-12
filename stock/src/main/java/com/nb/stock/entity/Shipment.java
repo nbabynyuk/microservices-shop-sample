@@ -2,14 +2,12 @@ package com.nb.stock.entity;
 
 import com.nb.common.ShipmentRequest;
 import lombok.Data;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import lombok.EqualsAndHashCode;
 
-@Document
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class Shipment extends ShipmentRequest {
 
-  @Id
   private String uuid;
 
 }
