@@ -8,8 +8,8 @@ import com.nb.common.OperationResult;
 import com.nb.orders.dto.OrderRequest;
 import com.nb.orders.entity.Order;
 import com.nb.orders.entity.ProcessingStage;
-import com.nb.orders.remote.PaymentClient;
-import com.nb.orders.remote.StockClient;
+import com.nb.orders.remote.PaymentsRemoteRepository;
+import com.nb.orders.remote.StockRemoteRepository;
 import com.nb.orders.repo.OrdersRepository;
 import com.nb.orders.services.handlers.OrderAcceptedHandler;
 import com.nb.orders.services.handlers.OrderAcceptedHandlerTest;
@@ -26,6 +26,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
+import static reactor.core.publisher.Mono.just;
+
 @RunWith(MockitoJUnitRunner.class)
 public class OrdersServiceTest {
 
@@ -39,10 +41,10 @@ public class OrdersServiceTest {
   public static final String REF_PAYMENT_UUID = "fwd-234-qqq";
 
   @Mock
-  private PaymentClient paymentClient;
+  private PaymentsRemoteRepository paymentsRemoteRepository;
 
   @Mock
-  private StockClient stockService;
+  private StockRemoteRepository stockService;
 
   @Mock
   private OrdersRepository ordersRepository;
@@ -55,7 +57,7 @@ public class OrdersServiceTest {
     this.ordersService = new OrdersService(
         new OrderAcceptedHandler(ordersRepository),
         new StockProcessingHandler(stockService),
-        new PaymentProcessingHandler(paymentClient, "123-321"),
+        new PaymentProcessingHandler(paymentsRemoteRepository, "123-321"),
         new ProcessCompletionHandler(ordersRepository)
     );
   }
@@ -66,16 +68,17 @@ public class OrdersServiceTest {
 
     Mockito.when(ordersRepository.save(any())).then(invocationOnMock -> {
       Order order = (Order) invocationOnMock.getArguments()[0];
-      return Mono.just(order);
+      return just(order);
     });
-    Mockito.when(paymentClient.process(any()))
-        .thenReturn(new OperationResult(REF_PAYMENT_UUID));
+    Mockito.when(paymentsRemoteRepository.process(any()))
+        .thenReturn(just(new OperationResult(REF_PAYMENT_UUID)));
     Mockito.when(stockService.processShipmentRequest(any()))
-        .thenReturn(new OperationResult(REF_SHIPMENT_UUID));
+        .thenReturn(Mono.just(new OperationResult(REF_SHIPMENT_UUID)));
     Mockito.when(ordersRepository.findById(anyString()))
         .thenReturn(
-            Mono.just(
-                new Order(REF_ORDER_UUID, request.getUserId(), request.getPurchases())));
+            just(new Order(REF_ORDER_UUID, 
+                request.getUserId(), 
+                request.getPurchases())));
     Mono<Order> result = ordersService.processOrder(request);
 
     StepVerifier.create(result)

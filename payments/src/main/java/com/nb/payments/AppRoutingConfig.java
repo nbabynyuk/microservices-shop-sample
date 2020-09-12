@@ -23,9 +23,9 @@ public class AppRoutingConfig {
 
   @Bean
   RouterFunction<ServerResponse> routing(){
-    Map<String, String> index = Map.of("name", "paymentStub",
+    Map<String, String> versionInfo = Map.of("name", "paymentStub",
         "version", "1.0.0");
-    return route(GET("/"), serverRequest -> ok().body(fromValue(index)))
+    return route(GET("/"), serverRequest -> ok().body(fromValue(versionInfo)))
             .andRoute(POST("/api/payments"), paymentHandler::save);
   }
 }

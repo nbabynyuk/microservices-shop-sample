@@ -6,7 +6,9 @@ metadata:
     app: userapp
 spec:
   ports:
-    - port: 80
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
   selector:
     app: userapp
     tier: backend
@@ -48,5 +50,5 @@ spec:
          - name: DB_PORT
            value: "3306"
         ports:
-         - containerPort: 80
+         - containerPort: 8080
            name: userapp

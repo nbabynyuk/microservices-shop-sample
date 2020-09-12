@@ -1,0 +1,16 @@
+{
+  "userId": "5543",
+  "purchases": [
+    {
+      "productId": "tested_product",
+      "quantity": 1,
+      "pricePerItem": 2.99
+    }
+  ],
+  "creditCard": {
+    "cardNumber": "xxx-yyy-zz",
+    "expireAt": "02/19",
+    "cvcode": "111"
+  },
+  "deliveryAddress": "xxxxffdfd, Street 5, 32"
+}
