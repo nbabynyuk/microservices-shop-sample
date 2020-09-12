@@ -37,6 +37,9 @@ spec:
         - image: microservices-shop-sample/stock
           imagePullPolicy: Never
           name: stock
+          env:
+            - name: PAYMENTS_DB_URI
+              value: mongodb://mongo-0.mongo:27017/payments
           ports:
             - containerPort: 8085
               name: stock

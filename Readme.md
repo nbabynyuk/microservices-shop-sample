@@ -28,4 +28,12 @@ TODO:
 - [ ] Swagger Code Gen sample
 - [ ] Move to Gradle
 
-In order to run whole stack: *docker-compose -f docker-compose.yml up*
+In order to run whole stack:
+* Kubernetes(minikube) way: all resources are in 'kubernetes-deployment' folder
+
+Debug tips: 
+In order to install `curl` to the busybox: `kubectl exec -it busybox -- opkg-install curl`
+Gratitude to Abdennour TOUMI, https://stackoverflow.com/questions/62847331/is-there-possible-to-install-curl-into-busybox-in-kubernetes-pod
+
+* Docker compose: *docker-compose -f docker-compose.yml up* - outdated, 
+not all services might work properly 

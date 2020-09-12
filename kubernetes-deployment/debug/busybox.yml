@@ -6,7 +6,7 @@ metadata:
     app: busybox
 spec:
   containers:
-    - image: busybox
+    - image: progrium/busybox
       command:
         - sleep
         - "3600"

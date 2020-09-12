@@ -46,7 +46,9 @@
       <artifactId>common</artifactId>
       <version>1.0-SNAPSHOT</version>
     </dependency>
-    <dependency>
+    <!-- TODO: add persistant support for this kind of application -->
+    <!--
+      <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-data-mongodb-reactive</artifactId>
     </dependency>
@@ -56,6 +58,7 @@
       <artifactId>de.flapdoodle.embed.mongo</artifactId>
       <scope>test</scope>
     </dependency>
+    -->
 
   </dependencies>
 
