@@ -17,11 +17,7 @@
     <version>0.1</version>
     <relativePath>..</relativePath>
   </parent>
-
-  <properties>
-    <spring-cloud.version>Greenwich.RELEASE</spring-cloud.version>
-  </properties>
-
+  
   <dependencies>
     <dependency>
       <groupId>org.springframework.boot</groupId>
