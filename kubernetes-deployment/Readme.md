@@ -8,4 +8,6 @@ Than build images that will be used in sample```docker build -t <you_tags> -f <y
 4) Run stack: ```kubectl apply -k .```
 5) Delete stack once you finished ```kubectl delete -k .```  
 
+Caveat: you might need to increase memory allocation for Docker(tested on 4Gb)
+
   
