@@ -1,5 +1,20 @@
 spring:
   application:
     name: api-gateway
+  cloud:
+    gateway:
+      routes:
+        - id: users_route
+          uri: ${USERS_SERVICE:http://localhost:8080/api/users}
+          predicates:
+            - Path=/api/users
+        - id: orders_route
+          uri: ${ORDERS_SERVICE:http://localhost:8084/api/orders}
+          predicates:
+            - Path=/api/orders
+        - id: path_route
+          uri: ${PRODUCT_CATALOG_SERVICE:http://localhost:8082/api/products}
+          predicates:
+            - Path=/api/products
 server:
   port: 8087
