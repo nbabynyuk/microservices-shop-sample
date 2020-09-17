@@ -9,3 +9,5 @@ resources:
     - payments.yml
 #    - stock-service.yml
 #    - product-catalog.yml
+#    - orders-service.yml
+#    - api-gateway.yml
