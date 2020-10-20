@@ -1,0 +1,8 @@
+server:
+  port: 8089
+spring:
+  application:
+    name: feedbacks
+logging:
+  level:
+    root: INFO
