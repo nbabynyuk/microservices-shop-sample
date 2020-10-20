@@ -1,0 +1,14 @@
+{
+  "properties": [
+    {
+      "name": "feedbackapp.redis.host",
+      "type": "java.lang.String",
+      "description": "Description for feedbackapp.redis.host."
+    },
+    {
+      "name": "feedbackapp.redis.port",
+      "type": "java.lang.String",
+      "description": "Description for feedbackapp.redis.port."
+    }
+  ]
+}

@@ -6,3 +6,8 @@ spring:
 logging:
   level:
     root: INFO
+feedbackapp:
+  redis:
+    host: ${REDIS_HOST:localhost}
+    port: ${REDIS_PORT:6379}  
+      

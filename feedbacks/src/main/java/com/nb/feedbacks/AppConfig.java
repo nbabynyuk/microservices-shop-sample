@@ -2,6 +2,7 @@ package com.nb.feedbacks;
 
 import com.nb.feedbacks.model.Feedback;
 import com.nb.feedbacks.service.FeedbacksService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.ReactiveRedisConnectionFactory;
@@ -16,9 +17,14 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @Configuration
 public class AppConfig {
 
+    private @Value("${feedbackapp.redis.host}")
+    String redisHostname;
+    private @Value("${feedbackapp.redis.port}")
+    int redisPort;
+
     @Bean
     public LettuceConnectionFactory redisConnectionFactory() {
-        return new LettuceConnectionFactory(new RedisStandaloneConfiguration("localhost", 6379));
+        return new LettuceConnectionFactory(new RedisStandaloneConfiguration(redisHostname, redisPort));
     }
 
     @Bean
