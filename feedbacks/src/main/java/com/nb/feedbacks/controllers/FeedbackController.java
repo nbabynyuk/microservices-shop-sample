@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import javax.validation.constraints.NotNull;
 
@@ -38,9 +39,10 @@ public class FeedbackController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void createFeedBack(@PathVariable("productUUID") String productUUID,
-                               @NotNull @RequestBody Feedback feedback) {
-        feedbacksService.create(productUUID, feedback);
+    public Mono<EmptyResponse> createFeedBack(@PathVariable("productUUID") String productUUID,
+                                              @NotNull @RequestBody Feedback feedback) {
+        return feedbacksService.create(productUUID, feedback)
+            .map(feedbacksCount -> new EmptyResponse());
     }
 
     @GetMapping

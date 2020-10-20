@@ -23,27 +23,26 @@ public class FeedbacksService {
         this.redisRepository = redisRepository;
     }
 
-    public void create(String productUUID, Feedback feedback) {
+    public Mono<Long> create(String productUUID, Feedback feedback) {
         feedback.setCreatedTime(currentTimeAsUtcString());
         feedback.setModifiedTime(currentTimeAsUtcString());
         feedback.setFeedbackUUID(UUID.randomUUID().toString());
-        this.redisRepository.opsForList().leftPush(productUUID, feedback)
+        return redisRepository.opsForList().leftPush(productUUID, feedback)
             .map(feedbackCount -> {
                 logger.info("feedback message: {}, feedback count: {}", feedback.toString(), feedbackCount);
                 if (feedbackCount > MAX_RECENT_FEEDBACKS_COUNT) {
-                    return this.redisRepository
+                    return redisRepository
                         .opsForList()
                         .rightPop(productUUID)
                         .map(mostRight -> MAX_RECENT_FEEDBACKS_COUNT);
                 } else {
                     return Mono.just(feedbackCount);
                 }
-            }).flatMap(x -> x)
-            .subscribe();
+            }).flatMap(x -> x);
     }
 
     public Flux<Feedback> list(String productUUID) {
-        return this.redisRepository
+        return redisRepository
             .opsForList()
             .range(productUUID, 0, MAX_RECENT_FEEDBACKS_COUNT);
     }
