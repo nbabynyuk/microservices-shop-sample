@@ -1,9 +1,11 @@
 package com.nb.feedbacks;
 
 import com.nb.feedbacks.model.Feedback;
+import reactor.core.publisher.Flux;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 public class FeedbackModuleTestUtil {
 
@@ -23,6 +25,16 @@ public class FeedbackModuleTestUtil {
         feedback.setUserId(5L);
         feedback.setUserDisplayName("Test user");
         return feedback;
+    }
+
+    public static Feedback createDummyFeedbackWithUUID() {
+        Feedback feedback = createDummyFeedback();
+        feedback.setFeedbackUUID(TEST_FEEDBACK_UUID);
+        return feedback;
+    }
+
+    public static Flux<Feedback> dummyFeedbacksSource() {
+        return Flux.fromIterable(List.of(createDummyFeedbackWithUUID()));
     }
 
 }

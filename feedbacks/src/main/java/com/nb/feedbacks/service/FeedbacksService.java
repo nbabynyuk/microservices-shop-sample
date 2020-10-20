@@ -50,7 +50,14 @@ public class FeedbacksService {
     public void update(String productUUID, Feedback f) {
     }
 
-    public void delete(String productUUID, String feedbackUUID) {
+    public Mono<Long> delete(String productUUID, String feedbackUUID) {
+        return redisRepository.opsForList().range(productUUID, 0, MAX_RECENT_FEEDBACKS_COUNT)
+            .filter(currentFeedback -> currentFeedback.getFeedbackUUID().equals(feedbackUUID))
+            .take(1)
+            .single()
+            .map(foundFeedback -> {
+                return redisRepository.opsForList().remove(productUUID, 1, foundFeedback);
+            }).flatMap(x -> x);
     }
 
     private String currentTimeAsUtcString() {

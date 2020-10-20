@@ -57,9 +57,10 @@ public class FeedbackController {
 
     @DeleteMapping("/{feedbackUUID}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteFeedBack(@PathVariable String productUUID,
-                               @PathVariable String feedbackUUID) {
-        feedbacksService.delete(productUUID, feedbackUUID);
+    public Mono<EmptyResponse> deleteFeedBack(@PathVariable String productUUID,
+                                              @PathVariable String feedbackUUID) {
+        return feedbacksService.delete(productUUID, feedbackUUID)
+            .map(removedItemsCount -> new EmptyResponse());
     }
 
 }

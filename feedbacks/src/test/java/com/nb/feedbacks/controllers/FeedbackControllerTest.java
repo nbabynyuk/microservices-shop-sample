@@ -86,6 +86,9 @@ class FeedbackControllerTest {
 
     @Test
     public void whenDeleteEventIsReceivedThenServiceMethodIsCalled() {
+        doReturn(Mono.just(1L))
+            .when(feedbacksService)
+            .delete(eq(TEST_PRODUCT_UUID), eq(TEST_FEEDBACK_UUID));
         webTestClient
             .delete()
             .uri("/api/products/da9169fc-65b5-4708-8895-88af85b423e0/feedbacks/" + TEST_FEEDBACK_UUID)

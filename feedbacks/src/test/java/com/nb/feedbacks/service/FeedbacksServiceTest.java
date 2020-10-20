@@ -20,6 +20,7 @@ import static com.nb.feedbacks.FeedbackModuleTestUtil.TEST_FEEDBACK_MESSAGE;
 import static com.nb.feedbacks.FeedbackModuleTestUtil.TEST_FEEDBACK_UUID;
 import static com.nb.feedbacks.FeedbackModuleTestUtil.TEST_PRODUCT_UUID;
 import static com.nb.feedbacks.FeedbackModuleTestUtil.createDummyFeedback;
+import static com.nb.feedbacks.FeedbackModuleTestUtil.dummyFeedbacksSource;
 import static com.nb.feedbacks.service.FeedbacksService.MAX_RECENT_FEEDBACKS_COUNT;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
@@ -103,7 +104,18 @@ class FeedbacksServiceTest {
 
     @Test
     public void whenDeleteEventIsReceivedThenServiceIsCalled() {
-        feedbacksService.delete(TEST_PRODUCT_UUID, TEST_FEEDBACK_UUID);
-
+        doReturn(dummyFeedbacksSource())
+            .when(reactiveListOperations)
+            .range(eq(TEST_PRODUCT_UUID),
+                eq(0L),
+                eq(MAX_RECENT_FEEDBACKS_COUNT));
+        doReturn(Mono.just(1L))
+            .when(reactiveListOperations)
+            .remove(eq(TEST_PRODUCT_UUID), eq(1L), any(Feedback.class));
+        doReturn(reactiveListOperations).when(redisRepository).opsForList();
+        Mono<Long> delete = feedbacksService.delete(TEST_PRODUCT_UUID, TEST_FEEDBACK_UUID);
+        StepVerifier.create(delete)
+            .expectNext(1L)
+            .verifyComplete();
     }
 }
