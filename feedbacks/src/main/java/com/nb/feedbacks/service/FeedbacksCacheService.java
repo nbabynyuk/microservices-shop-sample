@@ -12,14 +12,14 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
-public class FeedbacksService {
+public class FeedbacksCacheService {
 
-    public static final Logger logger = LoggerFactory.getLogger(FeedbacksService.class);
+    public static final Logger logger = LoggerFactory.getLogger(FeedbacksCacheService.class);
 
     public static final long MAX_RECENT_FEEDBACKS_COUNT = 5;
     private final ReactiveRedisOperations<String, Feedback> redisRepository;
 
-    public FeedbacksService(ReactiveRedisOperations<String, Feedback> redisRepository) {
+    public FeedbacksCacheService(ReactiveRedisOperations<String, Feedback> redisRepository) {
         this.redisRepository = redisRepository;
     }
 
@@ -47,7 +47,23 @@ public class FeedbacksService {
             .range(productUUID, 0, MAX_RECENT_FEEDBACKS_COUNT);
     }
 
-    public void update(String productUUID, Feedback f) {
+    public Mono<Boolean> update(String productUUID, String feedbackUUID, Feedback updatedFeedback) {
+        updatedFeedback.setFeedbackUUID(feedbackUUID);
+        updatedFeedback.setModifiedTime(currentTimeAsUtcString());
+        return redisRepository.opsForList()
+            .range(productUUID, 0L, MAX_RECENT_FEEDBACKS_COUNT)
+            .collectList()
+            .map(items -> {
+                Mono<Boolean> returnedResult = Mono.just(false);
+                for (int i = 0; i < items.size(); i++) {
+                    Feedback current = items.get(i);
+                    if (feedbackUUID.equals(current.getFeedbackUUID())) {
+                        returnedResult = redisRepository.opsForList().set(productUUID, i, updatedFeedback);
+                        break;
+                    }
+                }
+                return returnedResult;
+            }).flatMap(x -> x);
     }
 
     public Mono<Long> delete(String productUUID, String feedbackUUID) {

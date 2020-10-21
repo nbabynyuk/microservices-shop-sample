@@ -1,7 +1,7 @@
 package com.nb.feedbacks;
 
 import com.nb.feedbacks.model.Feedback;
-import com.nb.feedbacks.service.FeedbacksService;
+import com.nb.feedbacks.service.FeedbacksCacheService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -37,7 +37,7 @@ public class AppConfig {
     }
 
     @Bean
-    FeedbacksService feedbacksService(ReactiveRedisOperations<String, Feedback> template) {
-        return new FeedbacksService(template);
+    FeedbacksCacheService feedbacksService(ReactiveRedisOperations<String, Feedback> template) {
+        return new FeedbacksCacheService(template);
     }
 }

@@ -1,6 +1,7 @@
 package com.nb.feedbacks.controllers;
 
-import com.nb.feedbacks.service.FeedbacksService;
+import com.nb.feedbacks.model.Feedback;
+import com.nb.feedbacks.service.FeedbacksCacheService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,6 +25,7 @@ import static com.nb.feedbacks.FeedbackModuleTestUtil.createDummyFeedback;
 import static com.nb.feedbacks.FeedbackModuleTestUtil.loadSampleResource;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
@@ -34,7 +36,7 @@ import static org.mockito.Mockito.verify;
 class FeedbackControllerTest {
 
     @MockBean
-    private FeedbacksService feedbacksService;
+    private FeedbacksCacheService feedbacksCacheService;
 
     @Autowired
     private WebTestClient webTestClient;
@@ -50,7 +52,7 @@ class FeedbackControllerTest {
         String createPayload = loadSampleResource("feedbacks/create.json");
 
         doReturn(Mono.just(1L))
-            .when(feedbacksService).create(eq(TEST_PRODUCT_UUID), argThat(feedback -> {
+            .when(feedbacksCacheService).create(eq(TEST_PRODUCT_UUID), argThat(feedback -> {
             assertEquals(TEST_FEEDBACK_MESSAGE, feedback.getFeedbackMessage());
             assertNotNull(feedback.getFeedbackMessage());
             assertNotNull(feedback.getUserDisplayName());
@@ -72,7 +74,7 @@ class FeedbackControllerTest {
 
         doReturn(Flux.fromIterable(
             List.of(createDummyFeedback())))
-            .when(feedbacksService)
+            .when(feedbacksCacheService)
             .list(eq(TEST_PRODUCT_UUID));
         webTestClient
             .get()
@@ -87,7 +89,7 @@ class FeedbackControllerTest {
     @Test
     public void whenDeleteEventIsReceivedThenServiceMethodIsCalled() {
         doReturn(Mono.just(1L))
-            .when(feedbacksService)
+            .when(feedbacksCacheService)
             .delete(eq(TEST_PRODUCT_UUID), eq(TEST_FEEDBACK_UUID));
         webTestClient
             .delete()
@@ -95,6 +97,33 @@ class FeedbackControllerTest {
             .exchange()
             .expectStatus()
             .isNoContent();
-        verify(feedbacksService).delete(eq(TEST_PRODUCT_UUID), eq(TEST_FEEDBACK_UUID));
+        verify(feedbacksCacheService).delete(eq(TEST_PRODUCT_UUID), eq(TEST_FEEDBACK_UUID));
+    }
+
+    @Test
+    public void whenEditEventIsReceivedThenServiceMethodIsCalled() throws Exception {
+
+        String payload = loadSampleResource("feedbacks/create.json");
+
+        doReturn(Mono.just(true))
+            .when(feedbacksCacheService)
+            .update(eq(TEST_PRODUCT_UUID), eq(TEST_FEEDBACK_UUID), any(Feedback.class));
+
+        webTestClient
+            .put()
+            .uri("/api/products/da9169fc-65b5-4708-8895-88af85b423e0/feedbacks/" + TEST_FEEDBACK_UUID)
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(Mono.just(payload), String.class)
+            .exchange()
+            .expectStatus()
+            .isNoContent();
+
+        verify(feedbacksCacheService).update(eq(TEST_PRODUCT_UUID),
+            eq(TEST_FEEDBACK_UUID),
+            argThat(updatedFeedback ->
+                updatedFeedback.getFeedbackMessage().equals("feedback #15")
+                    && updatedFeedback.getUserId() == 19L
+                    && updatedFeedback.getUserDisplayName().equals("Nazar.B")
+            ));
     }
 }

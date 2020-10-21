@@ -21,16 +21,17 @@ import static com.nb.feedbacks.FeedbackModuleTestUtil.TEST_FEEDBACK_UUID;
 import static com.nb.feedbacks.FeedbackModuleTestUtil.TEST_PRODUCT_UUID;
 import static com.nb.feedbacks.FeedbackModuleTestUtil.createDummyFeedback;
 import static com.nb.feedbacks.FeedbackModuleTestUtil.dummyFeedbacksSource;
-import static com.nb.feedbacks.service.FeedbacksService.MAX_RECENT_FEEDBACKS_COUNT;
+import static com.nb.feedbacks.service.FeedbacksCacheService.MAX_RECENT_FEEDBACKS_COUNT;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class FeedbacksServiceTest {
+class FeedbacksCacheServiceTest {
 
     @Mock
     private ReactiveRedisOperations<String, Feedback> redisRepository;
@@ -38,12 +39,12 @@ class FeedbacksServiceTest {
     @Mock
     private ReactiveListOperations<String, Feedback> reactiveListOperations;
 
-    private FeedbacksService feedbacksService;
+    private FeedbacksCacheService feedbacksCacheService;
 
     @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this.getClass());
-        this.feedbacksService = new FeedbacksService(redisRepository);
+        this.feedbacksCacheService = new FeedbacksCacheService(redisRepository);
     }
 
     @Test
@@ -54,7 +55,7 @@ class FeedbacksServiceTest {
         when(reactiveListOperations.leftPush(eq(TEST_PRODUCT_UUID), feedbackArgumentCaptor.capture()))
             .thenReturn(Mono.just(1L));
         doReturn(reactiveListOperations).when(redisRepository).opsForList();
-        Mono<Long> createResult = feedbacksService.create(TEST_PRODUCT_UUID, createDummyFeedback());
+        Mono<Long> createResult = feedbacksCacheService.create(TEST_PRODUCT_UUID, createDummyFeedback());
         StepVerifier.create(createResult)
             .expectNext(1L)
             .verifyComplete();
@@ -73,7 +74,7 @@ class FeedbacksServiceTest {
             .thenReturn(Mono.just(new Feedback()));
         doReturn(reactiveListOperations).when(redisRepository).opsForList();
         Mono<Long> createResult
-            = feedbacksService.create(TEST_PRODUCT_UUID, createDummyFeedback());
+            = feedbacksCacheService.create(TEST_PRODUCT_UUID, createDummyFeedback());
         createResult.subscribe();
 
         verify(reactiveListOperations).leftPush(eq(TEST_PRODUCT_UUID), any());
@@ -93,7 +94,7 @@ class FeedbacksServiceTest {
             .when(reactiveListOperations)
             .range(eq(TEST_PRODUCT_UUID), eq(0L), eq(MAX_RECENT_FEEDBACKS_COUNT));
         doReturn(reactiveListOperations).when(redisRepository).opsForList();
-        Flux<Feedback> list = feedbacksService.list(TEST_PRODUCT_UUID);
+        Flux<Feedback> list = feedbacksCacheService.list(TEST_PRODUCT_UUID);
         StepVerifier.create(list)
             .expectSubscription()
             .expectNextMatches(f -> {
@@ -113,9 +114,33 @@ class FeedbacksServiceTest {
             .when(reactiveListOperations)
             .remove(eq(TEST_PRODUCT_UUID), eq(1L), any(Feedback.class));
         doReturn(reactiveListOperations).when(redisRepository).opsForList();
-        Mono<Long> delete = feedbacksService.delete(TEST_PRODUCT_UUID, TEST_FEEDBACK_UUID);
+        Mono<Long> delete = feedbacksCacheService.delete(TEST_PRODUCT_UUID, TEST_FEEDBACK_UUID);
         StepVerifier.create(delete)
             .expectNext(1L)
+            .verifyComplete();
+    }
+
+    @Test
+    public void whenEditEventIsCalledThenRepositoryIsCalled() {
+        doReturn(dummyFeedbacksSource())
+            .when(reactiveListOperations)
+            .range(eq(TEST_PRODUCT_UUID),
+                eq(0L),
+                eq(MAX_RECENT_FEEDBACKS_COUNT));
+        doReturn(Mono.just(true))
+            .when(reactiveListOperations)
+            .set(eq(TEST_PRODUCT_UUID),
+                eq(0L),
+                argThat(updatedFeedback ->
+                    updatedFeedback.getFeedbackUUID().equals(TEST_FEEDBACK_UUID)
+                        && updatedFeedback.getModifiedTime() != null));
+
+        doReturn(reactiveListOperations).when(redisRepository).opsForList();
+        Feedback dummyFeedback = createDummyFeedback();
+        dummyFeedback.setFeedbackMessage("edited msg");
+        Mono<Boolean> updateResult = feedbacksCacheService.update(TEST_PRODUCT_UUID, TEST_FEEDBACK_UUID, dummyFeedback);
+        StepVerifier.create(updateResult)
+            .expectNext(true)
             .verifyComplete();
     }
 }
