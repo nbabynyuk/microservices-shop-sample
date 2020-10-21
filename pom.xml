@@ -33,6 +33,7 @@
     <module>payments</module>
     <module>stock</module>
     <module>api-gateway</module>
+    <module>feedbacks</module>
   </modules>
 
   <dependencyManagement>

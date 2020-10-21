@@ -1,0 +1,16 @@
+server:
+  port: 8089
+spring:
+  application:
+    name: feedbacks
+  jackson:
+    serialization:
+      FAIL_ON_EMPTY_BEANS: false
+logging:
+  level:
+    root: INFO
+feedbackapp:
+  redis:
+    host: ${REDIS_HOST:localhost}
+    port: ${REDIS_PORT:6379}  
+      
