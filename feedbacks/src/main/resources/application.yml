@@ -3,6 +3,9 @@ server:
 spring:
   application:
     name: feedbacks
+  jackson:
+    serialization:
+      FAIL_ON_EMPTY_BEANS: false
 logging:
   level:
     root: INFO

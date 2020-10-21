@@ -1,5 +1,8 @@
 package com.nb.feedbacks.controllers;
 
+import com.nb.feedbacks.controllers.utils.EmptyResponse;
+import com.nb.feedbacks.controllers.utils.ErrorResponse;
+import com.nb.feedbacks.exceptions.ResourceNotFoundException;
 import com.nb.feedbacks.model.Feedback;
 import com.nb.feedbacks.service.FeedbacksCacheService;
 import org.slf4j.Logger;
@@ -7,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,6 +18,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
@@ -27,7 +32,6 @@ import javax.validation.constraints.NotNull;
 public class FeedbackController {
     public static final Logger logger = LoggerFactory.getLogger(FeedbackController.class);
 
-    public static final long MAX_RECENT_FEEDBACKS_COUNT = 5;
     public static final String CACHE_QUERY_TYPE = "cache";
     public static final String ALL_QUERY_TYPE = "all";
 
@@ -65,12 +69,20 @@ public class FeedbackController {
     }
 
     @PutMapping("/{feedbackUUID}")
+    @ResponseBody
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public Mono<EmptyResponse> deleteFeedBack(@PathVariable String productUUID,
                                               @PathVariable String feedbackUUID,
                                               @NotNull @RequestBody Feedback feedback) {
         return feedbacksCacheService.update(productUUID, feedbackUUID, feedback)
-            .map(removedItemsCount -> new EmptyResponse());
+            .map(updateResult -> new EmptyResponse());
     }
 
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseBody
+    public ErrorResponse fooBar(ResourceNotFoundException e) {
+        return new ErrorResponse("resource_not_found", e.getMessage());
+
+    }
 }

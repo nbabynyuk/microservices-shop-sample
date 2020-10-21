@@ -1,5 +1,6 @@
 package com.nb.feedbacks.service;
 
+import com.nb.feedbacks.exceptions.ResourceNotFoundException;
 import com.nb.feedbacks.model.Feedback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +12,8 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
+
+import static java.lang.String.format;
 
 public class FeedbacksCacheService {
 
@@ -54,16 +57,28 @@ public class FeedbacksCacheService {
             .range(productUUID, 0L, MAX_RECENT_FEEDBACKS_COUNT)
             .collectList()
             .map(items -> {
-                Mono<Boolean> returnedResult = Mono.just(false);
-                for (int i = 0; i < items.size(); i++) {
-                    Feedback current = items.get(i);
-                    if (feedbackUUID.equals(current.getFeedbackUUID())) {
-                        returnedResult = redisRepository.opsForList().set(productUUID, i, updatedFeedback);
-                        break;
-                    }
-                }
+                Mono<Boolean> returnedResult = findFeedbackAmongAlreadySaved(productUUID,
+                    feedbackUUID,
+                    updatedFeedback,
+                    items);
+                if (null == returnedResult)
+                    returnedResult = Mono.error(new ResourceNotFoundException(
+                        format("feedback with uuid %s not found for product %s", feedbackUUID, productUUID)
+                    ));
                 return returnedResult;
             }).flatMap(x -> x);
+    }
+
+    private Mono<Boolean> findFeedbackAmongAlreadySaved(String productUUID, String feedbackUUID, Feedback updatedFeedback, java.util.List<Feedback> items) {
+        Mono<Boolean> returnedResult = null;
+        for (int i = 0; i < items.size(); i++) {
+            Feedback current = items.get(i);
+            if (feedbackUUID.equals(current.getFeedbackUUID())) {
+                returnedResult = redisRepository.opsForList().set(productUUID, i, updatedFeedback);
+                break;
+            }
+        }
+        return returnedResult;
     }
 
     public Mono<Long> delete(String productUUID, String feedbackUUID) {
@@ -71,9 +86,9 @@ public class FeedbacksCacheService {
             .filter(currentFeedback -> currentFeedback.getFeedbackUUID().equals(feedbackUUID))
             .take(1)
             .single()
-            .map(foundFeedback -> {
-                return redisRepository.opsForList().remove(productUUID, 1, foundFeedback);
-            }).flatMap(x -> x);
+            .map(foundFeedback ->
+                redisRepository.opsForList().remove(productUUID, 1, foundFeedback))
+            .flatMap(x -> x);
     }
 
     private String currentTimeAsUtcString() {

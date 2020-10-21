@@ -1,4 +1,4 @@
-package com.nb.feedbacks.controllers;
+package com.nb.feedbacks.controllers.utils;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
